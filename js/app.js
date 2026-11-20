@@ -602,6 +602,110 @@ $('#wallGrid').addEventListener('click', async e => {
   wallBusy = false;
 });
 
+/* ---------------- move parade mini-game ---------------- */
+let paradeMoves = [];
+let paradeStep = 0;
+let paradeLocked = false;
+
+function renderMoveStart() {
+  paradeLocked = false;
+  $('#moveProgress').textContent = 'Ready';
+  $('#movePanel').innerHTML = `
+    <div class="move-title">Ready to move, ${CHILD_NAME}?</div>
+    <p class="move-hint">Rumi shows two moves. Then you guess what comes next!</p>
+    <button class="say-btn" data-move-action="start" type="button">▶ Start the parade</button>`;
+}
+
+function startParade() {
+  paradeMoves = shuffle(MOVES).slice(0, 3);
+  paradeStep = 0;
+  paradeLocked = false;
+  renderParadeStep();
+}
+
+function renderParadeStep() {
+  paradeLocked = false;
+  if (paradeStep >= 2) { renderParadeQuestion(); return; }
+  const move = paradeMoves[paradeStep];
+  const order = MOVE_ORDER[paradeStep];
+  $('#moveProgress').textContent = `${order} / Then?`;
+  $('#movePanel').innerHTML = `
+    <div class="move-step-label">${order}</div>
+    <div class="move-emoji" aria-hidden="true">${move.emoji}</div>
+    <div class="move-label">${move.label}</div>
+    <div class="row-buttons">
+      <button class="action-btn listen-btn" data-move-action="say" type="button">🔊 Say it again</button>
+      <button class="action-btn action-next" data-move-action="done" type="button">I did it! ✓</button>
+    </div>`;
+  if (currentView === 'home') speak(`${order}, ${CHILD_NAME}, ${move.say}!`);
+}
+
+function renderParadeQuestion() {
+  paradeLocked = false;
+  const correct = paradeMoves[2];
+  const choices = shuffle([correct, ...shuffle(MOVES.filter(m => m.label !== correct.label)).slice(0, 2)]);
+  $('#moveProgress').textContent = 'What next?';
+  $('#movePanel').innerHTML = `
+    <div class="move-step-label">Then what?</div>
+    <div class="move-sequence">
+      <span class="seq-chip">${paradeMoves[0].emoji}</span>
+      <span class="seq-arrow">➜</span>
+      <span class="seq-chip">${paradeMoves[1].emoji}</span>
+      <span class="seq-arrow">➜</span>
+      <span class="seq-question">?</span>
+    </div>
+    <p class="move-hint">${CHILD_NAME}, tap the move that comes next!</p>
+    <div class="move-choices">
+      ${choices.map(m => `
+        <button class="move-choice" data-move-choice="${m.label}" type="button"
+                aria-label="${m.label}">
+          <span class="m-emoji">${m.emoji}</span>
+          <span class="m-label">${m.label}</span>
+        </button>`).join('')}
+    </div>`;
+  if (currentView === 'home') {
+    speak(`${CHILD_NAME}, we did ${paradeMoves[0].say}, then ${paradeMoves[1].say}. What comes next?`);
+  }
+}
+
+$('#movePanel').addEventListener('click', e => {
+  const actionBtn = e.target.closest('[data-move-action]');
+  if (actionBtn) {
+    const action = actionBtn.dataset.moveAction;
+    sfx('tap');
+    if (action === 'start') { startParade(); return; }
+    if (action === 'say' && paradeMoves[paradeStep]) {
+      speak(`${MOVE_ORDER[paradeStep]}, ${CHILD_NAME}, ${paradeMoves[paradeStep].say}!`);
+      return;
+    }
+    if (action === 'done' && !paradeLocked && paradeMoves[paradeStep]) {
+      paradeLocked = true;
+      const move = paradeMoves[paradeStep];
+      const msg = praise();
+      sfx('correct'); addStar(); toast(msg);
+      speak(`${move.say}! ${msg}`);
+      later(() => { paradeStep++; renderParadeStep(); }, 1100);
+      return;
+    }
+  }
+
+  const choiceBtn = e.target.closest('[data-move-choice]');
+  if (!choiceBtn || paradeLocked || paradeMoves.length < 3) return;
+  const correct = paradeMoves[2];
+  if (choiceBtn.dataset.moveChoice === correct.label) {
+    paradeLocked = true;
+    choiceBtn.classList.add('good');
+    const msg = praise();
+    sfx('correct'); confetti(18); addStar(); toast(msg);
+    speak(`Yes! ${correct.say}! ${msg}`);
+    later(startParade, 1900);
+  } else {
+    choiceBtn.classList.remove('shake'); void choiceBtn.offsetWidth; choiceBtn.classList.add('shake');
+    const line = tryAgainLine();
+    sfx('wrong'); toast(line); speak(line);
+  }
+});
+
 /* ---------------- grown-up settings ---------------- */
 const modal = $('#parentModal');
 function openModal() { modal.classList.add('is-open'); modal.setAttribute('aria-hidden', 'false'); }
@@ -668,6 +772,7 @@ startWords();
 startSpelling();
 renderWallTabs();
 renderWall();
+renderMoveStart();
 $('#homeTip').textContent = pick(HOME_TIPS);
 setInterval(() => {
   if (currentView === 'home') $('#homeTip').textContent = pick(HOME_TIPS);

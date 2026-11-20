@@ -201,7 +201,23 @@ const HOME_TIPS = [
   `${CHILD_NAME}, let's build a little word!`,
   `Rumi is waiting for you, ${CHILD_NAME}!`,
   `${CHILD_NAME}, pick a game and let's shine!`,
-  `There are 80 pictures on your wall, ${CHILD_NAME}!`
+  `There are 80 pictures on your wall, ${CHILD_NAME}!`,
+  `${CHILD_NAME}, scroll down for a move parade!`
 ];
+
+/* Body moves for the First -> Next -> Then mini-game. */
+const MOVES = [
+  { emoji: '👏', label: 'Clap your hands', say: 'Clap your hands' },
+  { emoji: '🦘', label: 'Jump up high', say: 'Jump up high' },
+  { emoji: '👃', label: 'Touch your nose', say: 'Touch your nose' },
+  { emoji: '🙌', label: 'Reach up high', say: 'Reach up high' },
+  { emoji: '🦶', label: 'Stomp your foot', say: 'Stomp your foot' },
+  { emoji: '🌀', label: 'Spin around', say: 'Spin around' },
+  { emoji: '🪑', label: 'Sit down', say: 'Sit down' },
+  { emoji: '🧍', label: 'Stand up', say: 'Stand up' },
+  { emoji: '🙆', label: 'Wave your arms', say: 'Wave your arms' }
+];
+
+const MOVE_ORDER = ['First', 'Next', 'Then'];
 
 const LETTER_BANK = 'abcdefghijklmnopqrstuvwxyz'.split('');

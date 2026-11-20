@@ -16,6 +16,7 @@ It teaches:
 - **Word Match** — 80 picture words, with letter-by-letter spelling after every correct answer
 - **Picture Wall** — browse all 80 pictures by category (Animals, Food, Nature, Things, Vehicles); tap any card to hear it and see it spelled out
 - **Early spelling** — build 50 words from 3 to 5 letters by tapping letters
+- **Move Parade** — a mini-game at the bottom of the home screen: do two body moves, then guess what comes next (teaches first/next/then and following directions)
 
 Everything runs locally. No internet, no accounts, no downloads, no tracking.
 
