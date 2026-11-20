@@ -17,6 +17,8 @@ It teaches:
 - **Picture Wall** — browse all 80 pictures by category (Animals, Food, Nature, Things, Vehicles); tap any card to hear it and see it spelled out
 - **Early spelling** — build 50 words from 3 to 5 letters by tapping letters
 - **Move Parade** — a mini-game at the bottom of the home screen: do two body moves, then guess what comes next (teaches first/next/then and following directions)
+- **Quest Map** — six badges, progress bars, and a “next up” suggestion that steers Abby to the area needing the most practice
+- **Installable + offline** — Add to Home Screen for a full-screen tablet app; after the first load, the app shell works without internet
 
 Everything runs locally. No internet, no accounts, no downloads, no tracking.
 
@@ -65,18 +67,26 @@ Both listen on all network interfaces (`0.0.0.0`) so other devices can connect.
 5. For a full-screen experience on a tablet, use the browser's **Add to Home
    Screen** option (works in Chrome/Safari).
 
+### Install it like a real app 📲
+
+Open the site once (live or LAN), then choose **Install app** / **Add to Home
+Screen** from the browser menu. It opens full-screen with its own icon. The first
+load caches the app shell, so later visits work offline too. Progress stays in
+that browser; no account or cloud sync is involved.
+
 ---
 
 ## Grown-up corner
 
 Tap the **⚙️** button in the top right to:
 
-- turn the speaking voice on/off
+- turn the speaking voice on/off and choose/test a specific voice
 - turn the happy sound effects on/off
 - switch to slower speech for very early learners
-- reset stars and letter progress
+- see the progress dashboard and Rumi's suggested next activity
+- reset stars, badges and all learning progress
 
-Stars and letter progress are saved in the browser on each device.
+Stars, badges and learning progress are saved in the browser on each device.
 
 ### Stage audio 🎵
 

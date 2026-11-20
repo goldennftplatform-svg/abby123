@@ -220,4 +220,14 @@ const MOVES = [
 
 const MOVE_ORDER = ['First', 'Next', 'Then'];
 
+/* Quest Map: each activity has a badge and a gentle goal. */
+const QUESTS = [
+  { id: 'alpha', emoji: '🔤', title: 'Letter Stage', sub: 'Meet the alphabet', view: 'alpha', goal: 26, badge: '🌱', source: 'letters' },
+  { id: 'color', emoji: '🌈', title: 'Color Spotlight', sub: 'Find every color', view: 'color', goal: 12, badge: '🎨', source: 'colors' },
+  { id: 'word', emoji: '🐱', title: 'Word Match', sub: 'Match 20 pictures', view: 'word', goal: 20, badge: '📖', source: 'words' },
+  { id: 'spell', emoji: '🧩', title: 'Spell It!', sub: 'Build 10 words', view: 'spell', goal: 10, badge: '🧠', source: 'spells' },
+  { id: 'wall', emoji: '🖼️', title: 'Picture Wall', sub: 'Explore 20 cards', view: 'wall', goal: 20, badge: '🖼️', source: 'wall' },
+  { id: 'move', emoji: '💃', title: 'Move Parade', sub: 'Do 10 moves', view: 'move', goal: 10, badge: '⭐', source: 'moves' }
+];
+
 const LETTER_BANK = 'abcdefghijklmnopqrstuvwxyz'.split('');

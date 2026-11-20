@@ -57,6 +57,98 @@ function addStar(amount = 1) {
   }
 }
 
+/* ---------------- progress, quests & badges ---------------- */
+let seenColors = [];
+try { seenColors = JSON.parse(localStorage.getItem('rumiSeenColors') || '[]') || []; } catch (e) { seenColors = []; }
+
+const DEFAULT_STATS = { words: 0, spells: 0, wall: 0, moves: 0, correct: 0, tries: 0 };
+let stats = Object.assign({}, DEFAULT_STATS);
+try { stats = Object.assign({}, DEFAULT_STATS, JSON.parse(localStorage.getItem('rumiStats') || '{}') || {}); } catch (e) { stats = Object.assign({}, DEFAULT_STATS); }
+
+function saveStats() { localStorage.setItem('rumiStats', JSON.stringify(stats)); }
+function bumpStat(name, amount = 1) {
+  stats[name] = (stats[name] || 0) + amount;
+  saveStats();
+  renderQuestMap();
+  renderParentStats();
+}
+function markColorSeen(color) {
+  if (!color || seenColors.includes(color.name)) return;
+  seenColors.push(color.name);
+  localStorage.setItem('rumiSeenColors', JSON.stringify(seenColors));
+  stats.colors = seenColors.length;
+  saveStats();
+  renderQuestMap();
+  renderParentStats();
+}
+function questValue(quest) {
+  if (quest.source === 'letters') return seenLetters.length;
+  if (quest.source === 'colors') return seenColors.length;
+  return stats[quest.source] || 0;
+}
+function recommendedQuest() {
+  return QUESTS.slice().sort((a, b) => (questValue(a) / a.goal) - (questValue(b) / b.goal))[0];
+}
+function earnedBadgeCount() {
+  return QUESTS.filter(q => questValue(q) >= q.goal).length;
+}
+
+function renderQuestMap() {
+  if (!$('#questGrid')) return;
+  const next = recommendedQuest();
+  $('#questProgress').textContent = `${earnedBadgeCount()} / ${QUESTS.length} badges`;
+  $('#questNext').textContent = `${CHILD_NAME}, next up: ${next.title} — ${next.sub}!`;
+  $('#questGrid').innerHTML = QUESTS.map(q => {
+    const value = Math.min(questValue(q), q.goal);
+    const pct = Math.round((value / q.goal) * 100);
+    const earned = value >= q.goal;
+    const isNext = q.id === next.id;
+    return `
+      <button class="quest-card${earned ? ' earned' : ''}${isNext ? ' next' : ''}"
+              data-quest="${q.id}" type="button"
+              aria-label="${q.title}: ${value} of ${q.goal}. ${q.sub}">
+        <span class="quest-top">
+          <span class="q-emoji">${q.emoji}</span>
+          <span class="q-badge">${q.badge}</span>
+        </span>
+        <span class="q-title">${q.title}</span>
+        <span class="q-sub">${q.sub}</span>
+        <span class="quest-bar"><i style="width:${pct}%"></i></span>
+        <span class="q-meta">${value} / ${q.goal}</span>
+      </button>`;
+  }).join('');
+}
+
+function renderParentStats() {
+  if (!$('#parentStats')) return;
+  const rec = recommendedQuest();
+  const cards = [
+    { label: 'Stars', value: stars },
+    { label: 'Letters', value: `${seenLetters.length}/26` },
+    { label: 'Colors', value: `${seenColors.length}/12` },
+    { label: 'Words', value: stats.words || 0 },
+    { label: 'Spells', value: stats.spells || 0 },
+    { label: 'Badges', value: `${earnedBadgeCount()}/${QUESTS.length}` }
+  ];
+  $('#parentStats').innerHTML = cards.map(c =>
+    `<div class="parent-stat"><b>${c.value}</b><span>${c.label}</span></div>`).join('') +
+    `<div class="parent-stat recommend">✨ Rumi suggests: <strong>${rec.title}</strong> — ${rec.sub}</div>`;
+}
+
+$('#questGrid').addEventListener('click', e => {
+  const card = e.target.closest('[data-quest]');
+  if (!card) return;
+  const quest = QUESTS.find(q => q.id === card.dataset.quest);
+  if (!quest) return;
+  sfx('tap');
+  if (quest.view === 'move') {
+    showView('home');
+    later(() => $('#moveGame').scrollIntoView({ behavior: 'smooth', block: 'center' }), 80);
+  } else {
+    showView(quest.view);
+  }
+});
+
 /* ---------------- sound: original synthesized stage audio ---------------- */
 function initAudio() { if (window.RumiAudio) RumiAudio.init(); }
 document.addEventListener('pointerdown', initAudio, { once: true });
@@ -278,6 +370,8 @@ function openLetter(i) {
     seenLetters.push(a.letter);
     localStorage.setItem('rumiSeen', JSON.stringify(seenLetters));
     addStar();
+    renderQuestMap();
+    renderParentStats();
     $(`[data-index="${i}"]`)?.classList.add('seen');
   }
   $('#alphaProgress').textContent = `${seenLetters.length} / 26`;
@@ -402,12 +496,15 @@ $('#swatchRow').addEventListener('click', e => {
   const b = e.target.closest('[data-color]');
   if (!b) return;
   colorIndex = parseInt(b.dataset.color, 10);
-  sfx('tap'); renderColorLearn();
+  sfx('tap'); markColorSeen(COLORS[colorIndex]); renderColorLearn();
 });
-$('#colorSay').addEventListener('click', () => { sfx('tap'); speak(`${COLORS[colorIndex].name}!`); });
+$('#colorSay').addEventListener('click', () => {
+  sfx('tap'); markColorSeen(COLORS[colorIndex]); speak(`${COLORS[colorIndex].name}!`);
+});
 $('#colorNext').addEventListener('click', () => {
   sfx('tap');
   colorIndex = (colorIndex + 1) % COLORS.length;
+  markColorSeen(COLORS[colorIndex]);
   renderColorLearn();
 });
 $('#starOptions').addEventListener('click', e => {
@@ -418,11 +515,12 @@ $('#starOptions').addEventListener('click', e => {
     btn.style.filter = 'drop-shadow(0 0 16px #fff)';
     const msg = praise();
     sfx('lightstick'); sfx('correct'); confetti(18); addStar(); toast(msg);
+    markColorSeen(findTarget); bumpStat('correct');
     speak(`${findTarget.name}! ${msg}`);
     later(renderColorFind, 1200);
   } else {
     btn.classList.remove('shake'); void btn.offsetWidth; btn.classList.add('shake');
-    sfx('wrong'); speak(tryAgainLine());
+    sfx('wrong'); bumpStat('tries'); speak(tryAgainLine());
   }
 });
 
@@ -471,11 +569,12 @@ $('#wordAnswers').addEventListener('click', async e => {
     btn.classList.add('good');
     const message = praise();
     celebrate(message, currentWord.word, { spell: true });
+    bumpStat('words'); bumpStat('correct');
     await spellLetters(currentWord.word, $('#wordSpell'), message);
     later(() => { wordIndex++; renderWord(); }, 700);
   } else {
     btn.classList.remove('shake'); void btn.offsetWidth; btn.classList.add('shake');
-    sfx('wrong'); speak(tryAgainLine());
+    sfx('wrong'); bumpStat('tries'); speak(tryAgainLine());
   }
 });
 $('#wordSay').addEventListener('click', () => {
@@ -536,11 +635,12 @@ $('#letterBank').addEventListener('click', e => {
       spellLocked = true;
       sfx('powerup');
       celebrate('You spelled it!', spellWord);
+      bumpStat('spells'); bumpStat('correct');
       later(() => { spellIndex++; renderSpell(); }, 1900);
     }
   } else {
     btn.classList.remove('shake'); void btn.offsetWidth; btn.classList.add('shake');
-    sfx('wrong'); speak(tryAgainLine());
+    sfx('wrong'); bumpStat('tries'); speak(tryAgainLine());
   }
 });
 
@@ -595,7 +695,7 @@ $('#wallGrid').addEventListener('click', async e => {
   const list = wallCategory === 'All' ? WORDS : WORDS.filter(w => w.category === wallCategory);
   const w = list[parseInt(b.dataset.i, 10)];
   wallBusy = true;
-  sfx('tap');
+  sfx('tap'); bumpStat('wall');
   speak(w.word);
   await beat(420);
   await spellLetters(w.word, $('#wallSpell'), 'Great spelling!');
@@ -682,7 +782,7 @@ $('#movePanel').addEventListener('click', e => {
       paradeLocked = true;
       const move = paradeMoves[paradeStep];
       const msg = praise();
-      sfx('correct'); addStar(); toast(msg);
+      sfx('correct'); addStar(); bumpStat('moves'); toast(msg);
       speak(`${move.say}! ${msg}`);
       later(() => { paradeStep++; renderParadeStep(); }, 1100);
       return;
@@ -696,19 +796,23 @@ $('#movePanel').addEventListener('click', e => {
     paradeLocked = true;
     choiceBtn.classList.add('good');
     const msg = praise();
-    sfx('correct'); confetti(18); addStar(); toast(msg);
+    sfx('correct'); confetti(18); addStar(); bumpStat('moves'); bumpStat('correct'); toast(msg);
     speak(`Yes! ${correct.say}! ${msg}`);
     later(startParade, 1900);
   } else {
     choiceBtn.classList.remove('shake'); void choiceBtn.offsetWidth; choiceBtn.classList.add('shake');
     const line = tryAgainLine();
-    sfx('wrong'); toast(line); speak(line);
+    sfx('wrong'); bumpStat('tries'); toast(line); speak(line);
   }
 });
 
 /* ---------------- grown-up settings ---------------- */
 const modal = $('#parentModal');
-function openModal() { modal.classList.add('is-open'); modal.setAttribute('aria-hidden', 'false'); }
+function openModal() {
+  modal.classList.add('is-open');
+  modal.setAttribute('aria-hidden', 'false');
+  renderParentStats();
+}
 function closeModal() { modal.classList.remove('is-open'); modal.setAttribute('aria-hidden', 'true'); }
 
 $('#parentBtn').addEventListener('click', () => { sfx('tap'); openModal(); });
@@ -747,11 +851,15 @@ $('#musicToggle').addEventListener('change', e => {
 });
 $('#slowToggle').addEventListener('change', e => { settings.slow = e.target.checked; saveSettings(); });
 $('#resetStars').addEventListener('click', () => {
-  if (!confirm('Reset all stars and letter progress?')) return;
-  stars = 0; seenLetters = [];
+  if (!confirm('Reset all stars, badges, and learning progress?')) return;
+  stars = 0; seenLetters = []; seenColors = [];
+  stats = Object.assign({}, DEFAULT_STATS);
   localStorage.setItem('rumiStars', '0');
   localStorage.setItem('rumiSeen', '[]');
+  localStorage.setItem('rumiSeenColors', '[]');
+  saveStats();
   updateStarCount(); buildAlphabet(); $('#alphaProgress').textContent = '0 / 26';
+  renderQuestMap(); renderParentStats();
   toast(`Fresh start for ${CHILD_NAME}! ✨`);
 });
 
@@ -773,6 +881,8 @@ startSpelling();
 renderWallTabs();
 renderWall();
 renderMoveStart();
+renderQuestMap();
+renderParentStats();
 $('#homeTip').textContent = pick(HOME_TIPS);
 setInterval(() => {
   if (currentView === 'home') $('#homeTip').textContent = pick(HOME_TIPS);

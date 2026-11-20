@@ -274,6 +274,90 @@ button { font-family: inherit; cursor: pointer; }
   font-weight: 900; font-size: clamp(12px, 1.5vw, 16px); white-space: nowrap;
 }
 
+/* ---------------- abby's quest map ---------------- */
+.quest-map {
+  max-width: 1180px; margin: clamp(18px, 3vh, 30px) auto 0;
+}
+.quest-head {
+  display: flex; align-items: center; justify-content: space-between; gap: 12px;
+  margin-bottom: 12px;
+}
+.quest-head h2 {
+  margin: 0; font-size: clamp(20px, 2.8vw, 30px);
+  color: var(--gold); text-shadow: 0 3px 0 rgba(0, 0, 0, .35);
+}
+.quest-head p { margin: 4px 0 0; font-size: clamp(13px, 1.7vw, 17px); color: #f3e6ff; }
+.quest-grid {
+  display: grid; grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: clamp(10px, 1.5vw, 16px);
+}
+.quest-card {
+  position: relative; overflow: hidden;
+  min-height: 134px;
+  border-radius: 22px;
+  border: 3px solid rgba(255, 255, 255, .24);
+  background: linear-gradient(145deg, #6a2bb0, #3c116b);
+  box-shadow: var(--shadow-sm);
+  color: #fff; text-align: left;
+  padding: 12px 14px;
+  display: flex; flex-direction: column; gap: 6px;
+  transition: transform .1s, filter .15s;
+}
+.quest-card:active { transform: translateY(4px) scale(.98); }
+.quest-card.next {
+  border-color: var(--gold);
+  box-shadow: 0 0 0 3px rgba(255, 212, 94, .25), 0 0 26px rgba(255, 212, 94, .45);
+}
+.quest-card.next::after {
+  content: 'NEXT'; position: absolute; top: 10px; right: 12px;
+  font-size: 10px; font-weight: 900; letter-spacing: 1px;
+  color: #6b3a00; background: var(--gold);
+  padding: 3px 8px; border-radius: 999px;
+}
+.quest-top { display: flex; align-items: center; gap: 10px; }
+.q-emoji { font-size: clamp(30px, 4vw, 44px); line-height: 1; }
+.q-badge { font-size: 30px; opacity: .22; filter: grayscale(1); margin-left: auto; }
+.quest-card.earned .q-badge { opacity: 1; filter: none; }
+.quest-card.earned { background: linear-gradient(145deg, #2fb8b0, #2a78c9); }
+.q-title { font-size: clamp(15px, 1.9vw, 20px); font-weight: 900; line-height: 1.1; }
+.q-sub { font-size: clamp(11px, 1.4vw, 14px); color: #e2cbff; }
+.quest-bar {
+  height: 10px; border-radius: 999px;
+  background: rgba(0, 0, 0, .28); overflow: hidden;
+}
+.quest-bar i {
+  display: block; height: 100%; border-radius: inherit;
+  background: linear-gradient(90deg, #ffd45e, #ff8a4c);
+  transition: width .35s ease;
+}
+.q-meta { font-size: 11px; color: rgba(255, 255, 255, .8); }
+
+/* grown-up progress */
+.parent-stats {
+  margin: 14px 0; padding: 12px;
+  border-radius: 16px;
+  background: rgba(255, 255, 255, .08);
+  border: 2px solid rgba(255, 255, 255, .16);
+  display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px;
+}
+.parent-stat {
+  text-align: center; padding: 8px 4px;
+  border-radius: 12px; background: rgba(0, 0, 0, .18);
+}
+.parent-stat b { display: block; font-size: 20px; color: var(--gold); }
+.parent-stat span { font-size: 11px; color: #e2cbff; }
+.parent-stat.recommend {
+  grid-column: 1 / -1; font-size: 13px; color: #fff; font-weight: 800;
+}
+
+@media (max-width: 1050px) {
+  .quest-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (max-width: 700px) {
+  .quest-grid { grid-template-columns: 1fr; }
+  .parent-stats { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
 /* ---------------- move parade mini-game ---------------- */
 .mini-game {
   max-width: 1180px; margin: clamp(18px, 3vh, 30px) auto 8px;
