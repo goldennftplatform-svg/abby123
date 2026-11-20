@@ -204,6 +204,11 @@ button { font-family: inherit; cursor: pointer; }
 .hero-copy p { margin: 4px 0 14px; font-size: clamp(15px, 2.2vw, 23px); color: #f3e6ff; }
 
 .hero-buttons { display: flex; gap: 10px; flex-wrap: wrap; }
+.home-tip {
+  margin: 12px 0 0; min-height: 1.4em;
+  font-size: clamp(13px, 1.8vw, 19px);
+  color: var(--gold); font-style: italic;
+}
 .theme-btn {
   background: linear-gradient(180deg, #b18cff, #7b3fd4);
   box-shadow: 0 6px 0 #4a1b82, 0 10px 18px rgba(0,0,0,.28);
@@ -568,6 +573,13 @@ button { font-family: inherit; cursor: pointer; }
   font-size: 19px; font-weight: 800;
 }
 .setting-row input { width: 30px; height: 30px; accent-color: #ff5fb8; }
+.setting-row select {
+  max-width: 230px; padding: 9px 11px;
+  border-radius: 12px; border: 2px solid rgba(255,255,255,.35);
+  background: #3c116b; color: #fff;
+  font-family: inherit; font-size: 14px; font-weight: 800;
+}
+.test-voice-btn { font-size: 14px; padding: 9px 16px; }
 .modal-actions { display: flex; gap: 12px; margin-top: 20px; flex-wrap: wrap; }
 .modal-fineprint { font-size: 12px; color: #c8aee8; line-height: 1.5; margin: 18px 0 0; }
 

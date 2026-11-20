@@ -1,4 +1,7 @@
-# Rumi's Alphabet Stage 🌟
+# Abby's Alphabet Stage with Rumi 🌟
+
+Made just for Abby — Rumi greets her by name and uses random little pep talks
+throughout the games.
 
 **Live site (GitHub Pages):** https://goldennftplatform-svg.github.io/abby123/
 
@@ -87,6 +90,13 @@ artist are used or included.
 
 You can turn the stage music off in the grown-up corner if you'd prefer a
 quieter game.
+
+### Voice quality 🗣️
+
+The speaking voice now prefers a natural/neural English voice installed on the
+device, at a calmer speed and normal pitch. In the grown-up corner you can also
+choose a specific voice from a **Choose voice** list, test it with **Say hi to
+Abby**, or turn voices off completely. The choice is saved in that browser.
 
 ---
 

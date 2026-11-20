@@ -1,5 +1,7 @@
 /* Rumi's Alphabet Stage - all learning content lives here. */
 
+const CHILD_NAME = 'Abby';
+
 const ALPHABET = [
   { letter: 'A', emoji: '🍎', word: 'Apple', more: [{ word: 'Ant', emoji: '🐜' }, { word: 'Astronaut', emoji: '👨‍🚀' }] },
   { letter: 'B', emoji: '⚽', word: 'Ball', more: [{ word: 'Bear', emoji: '🐻' }, { word: 'Banana', emoji: '🍌' }] },
@@ -166,8 +168,40 @@ const SPELL_WORDS = [
 ];
 
 const PRAISE = [
-  'Amazing!', 'Super star!', 'You got it!', 'Brilliant!', 'Way to shine!',
-  'Great job!', 'Rumi is so proud!', 'Wow!', 'Perfect!', 'You did it!'
+  `Amazing, ${CHILD_NAME}!`,
+  `Super star, ${CHILD_NAME}!`,
+  `You got it, ${CHILD_NAME}!`,
+  `Brilliant, ${CHILD_NAME}!`,
+  `Way to shine, ${CHILD_NAME}!`,
+  `Great job, ${CHILD_NAME}!`,
+  `Rumi is so proud of you, ${CHILD_NAME}!`,
+  `Wow, ${CHILD_NAME}! Perfect!`,
+  `You did it, ${CHILD_NAME}!`,
+  `${CHILD_NAME}, you're a superstar!`
+];
+
+const TRY_AGAIN = [
+  `Almost, ${CHILD_NAME}! Try again!`,
+  `You can do it, ${CHILD_NAME}!`,
+  `Good try, ${CHILD_NAME}. Let's try again!`,
+  `One more time, ${CHILD_NAME}!`,
+  `Rumi believes in you, ${CHILD_NAME}!`
+];
+
+const GREETINGS = [
+  `Hi ${CHILD_NAME}! I'm Rumi! Let's play and learn!`,
+  `Hey ${CHILD_NAME}, super star! Ready to shine?`,
+  `Hello ${CHILD_NAME}! Your stage is ready!`,
+  `Hi ${CHILD_NAME}! Rumi saved you a spot on stage!`
+];
+
+const HOME_TIPS = [
+  `${CHILD_NAME}, tap a letter to hear it sing!`,
+  `Can you find the purple star, ${CHILD_NAME}?`,
+  `${CHILD_NAME}, let's build a little word!`,
+  `Rumi is waiting for you, ${CHILD_NAME}!`,
+  `${CHILD_NAME}, pick a game and let's shine!`,
+  `There are 80 pictures on your wall, ${CHILD_NAME}!`
 ];
 
 const LETTER_BANK = 'abcdefghijklmnopqrstuvwxyz'.split('');

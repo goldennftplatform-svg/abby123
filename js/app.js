@@ -15,13 +15,15 @@ function shuffle(arr) {
 }
 function pick(arr) { return arr[Math.floor(Math.random() * arr.length)]; }
 function praise() { return pick(PRAISE); }
+function tryAgainLine() { return pick(TRY_AGAIN); }
 
 /* ---------------- settings & stars ---------------- */
 const settings = {
   voice: localStorage.getItem('rumiVoice') !== 'off',
   sfx: localStorage.getItem('rumiSfx') !== 'off',
   music: localStorage.getItem('rumiMusic') !== 'off',
-  slow: localStorage.getItem('rumiSlow') === 'on'
+  slow: localStorage.getItem('rumiSlow') === 'on',
+  voiceURI: localStorage.getItem('rumiVoiceURI') || ''
 };
 
 let stars = parseInt(localStorage.getItem('rumiStars') || '0', 10) || 0;
@@ -33,6 +35,7 @@ function saveSettings() {
   localStorage.setItem('rumiSfx', settings.sfx ? 'on' : 'off');
   localStorage.setItem('rumiMusic', settings.music ? 'on' : 'off');
   localStorage.setItem('rumiSlow', settings.slow ? 'on' : 'off');
+  localStorage.setItem('rumiVoiceURI', settings.voiceURI || '');
 }
 
 function updateStarCount() { $('#starCount').textContent = stars; }
@@ -49,8 +52,8 @@ function addStar(amount = 1) {
   if (stars > 0 && stars % 5 === 0) {
     stageVictory();
     confetti(30);
-    toast('✨ Honmoon power! ✨', 2200);
-    speak('Honmoon power! Rumi is so proud of you!');
+    toast(`✨ Honmoon power, ${CHILD_NAME}! ✨`, 2200);
+    speak(`Honmoon power, ${CHILD_NAME}! Rumi is so proud of you!`);
   }
 }
 
@@ -67,16 +70,49 @@ function stageVictory() {
   RumiAudio.honmoon();
 }
 
+/* Pick the nicest installed voice, or let a grown-up choose one. */
+let voices = [];
+function loadVoices() {
+  if (!('speechSynthesis' in window)) return;
+  voices = window.speechSynthesis.getVoices() || [];
+  const sel = $('#voiceSelect');
+  if (!sel) return;
+  const english = voices.filter(v => /^en/i.test(v.lang));
+  sel.innerHTML = '<option value="">✨ Auto (best available)</option>' +
+    english.map(v => `<option value="${v.voiceURI}">${v.name} (${v.lang})</option>`).join('');
+  sel.value = english.some(v => v.voiceURI === settings.voiceURI) ? settings.voiceURI : '';
+}
+
+function chooseVoice() {
+  if (!voices.length) return null;
+  if (settings.voiceURI) {
+    return voices.find(v => v.voiceURI === settings.voiceURI) || null;
+  }
+  const english = voices.filter(v => /^en/i.test(v.lang));
+  const wanted = ['natural', 'neural', 'google', 'samantha', 'jenny', 'aria', 'zira', 'karen', 'moira', 'sonia', 'victoria', 'female'];
+  return english.find(v => wanted.some(w => v.name.toLowerCase().includes(w))) ||
+    english[0] || voices[0] || null;
+}
+
+if ('speechSynthesis' in window) {
+  loadVoices();
+  window.speechSynthesis.addEventListener?.('voiceschanged', loadVoices);
+  window.speechSynthesis.onvoiceschanged = loadVoices;
+}
+
 function speak(text, opts = {}) {
   if (!settings.voice || !('speechSynthesis' in window)) return;
   try {
-    window.speechSynthesis.cancel();
+    const synth = window.speechSynthesis;
+    if (synth.speaking) synth.cancel();
     const u = new SpeechSynthesisUtterance(text);
-    u.lang = 'en-US';
-    u.rate = opts.rate || (settings.slow ? 0.62 : 0.82);
-    u.pitch = opts.pitch || 1.18;
+    const voice = chooseVoice();
+    if (voice) { u.voice = voice; u.lang = voice.lang; }
+    else u.lang = 'en-US';
+    u.rate = opts.rate || (settings.slow ? 0.66 : 0.92);
+    u.pitch = opts.pitch || 1.0;
     u.volume = 1;
-    window.speechSynthesis.speak(u);
+    synth.speak(u);
   } catch (e) { /* speech is a bonus, never block play */ }
 }
 
@@ -139,12 +175,12 @@ async function spellLetters(word, el, message) {
 /* ---------------- navigation ---------------- */
 let currentView = 'home';
 const TAGLINES = {
-  home: 'Sing it. See it. Learn it!',
-  alpha: 'A, B, C - let\'s sing!',
-  color: 'Colors everywhere!',
-  word: 'Read the little word!',
-  spell: 'Tap the letters!',
-  wall: '80 pictures to explore!'
+  home: `${CHILD_NAME}, sing it. See it. Learn it!`,
+  alpha: `A, B, C — sing with ${CHILD_NAME}!`,
+  color: `${CHILD_NAME}, colors everywhere!`,
+  word: `${CHILD_NAME}, read the little word!`,
+  spell: `${CHILD_NAME}, tap the letters!`,
+  wall: `80 pictures for ${CHILD_NAME}!`
 };
 
 function showView(name) {
@@ -154,6 +190,7 @@ function showView(name) {
   $$('.view').forEach(v => v.classList.toggle('is-active', v.id === 'view-' + name));
   $('#mascotPeek').style.display = name === 'home' ? '' : 'none';
   $('#tagline').textContent = TAGLINES[name] || TAGLINES.home;
+  if (name === 'home') $('#homeTip').textContent = pick(HOME_TIPS);
   $('.stage').scrollTop = 0;
   const view = $('#view-' + name);
   if (view) view.scrollTop = 0;
@@ -165,8 +202,9 @@ $$('[data-go-home]').forEach(btn => btn.addEventListener('click', () => { sfx('t
 $('#homeBtn').addEventListener('click', () => { sfx('tap'); showView('home'); });
 $('#heroSay').addEventListener('click', () => {
   sfx('mic');
-  speak("Hi! I'm Rumi, the K-pop stage star! Let's shine together!");
-  toast('Hi, star! ✨');
+  const line = pick(GREETINGS);
+  speak(line);
+  toast(`Hi ${CHILD_NAME}! ✨`, 2000);
 });
 
 let themeTimer = null;
@@ -193,7 +231,7 @@ $('#themeBtn').addEventListener('click', () => {
       btn.classList.remove('playing');
       btn.textContent = "🎵 Rumi's Stage Theme";
     }, duration * 1000);
-    speak("Let's shine, star!");
+    speak(`Let's shine, ${CHILD_NAME}!`);
   }
 });
 
@@ -339,8 +377,8 @@ function renderColorFind() {
   findLocked = false;
   const options = shuffle(COLORS).slice(0, 4);
   findTarget = pick(options);
-  $('#colorPrompt').innerHTML = `Find the <strong>${findTarget.name.toLowerCase()}</strong> star!`;
-  $('#colorHint').textContent = 'Tap the right star!';
+  $('#colorPrompt').innerHTML = `${CHILD_NAME}, find the <strong>${findTarget.name.toLowerCase()}</strong> star!`;
+  $('#colorHint').textContent = `Tap the right star, ${CHILD_NAME}!`;
   $('#starOptions').innerHTML = options.map(c =>
     `<button class="big-star" data-name="${c.name}" type="button"
        aria-label="${c.name} star">${starMarkup(c.hex, c.name)}</button>`).join('');
@@ -384,7 +422,7 @@ $('#starOptions').addEventListener('click', e => {
     later(renderColorFind, 1200);
   } else {
     btn.classList.remove('shake'); void btn.offsetWidth; btn.classList.add('shake');
-    sfx('wrong'); speak('Try again!');
+    sfx('wrong'); speak(tryAgainLine());
   }
 });
 
@@ -437,7 +475,7 @@ $('#wordAnswers').addEventListener('click', async e => {
     later(() => { wordIndex++; renderWord(); }, 700);
   } else {
     btn.classList.remove('shake'); void btn.offsetWidth; btn.classList.add('shake');
-    sfx('wrong'); speak('Try again!');
+    sfx('wrong'); speak(tryAgainLine());
   }
 });
 $('#wordSay').addEventListener('click', () => {
@@ -502,7 +540,7 @@ $('#letterBank').addEventListener('click', e => {
     }
   } else {
     btn.classList.remove('shake'); void btn.offsetWidth; btn.classList.add('shake');
-    sfx('wrong'); speak('Try another letter!');
+    sfx('wrong'); speak(tryAgainLine());
   }
 });
 
@@ -579,8 +617,17 @@ $('#slowToggle').checked = settings.slow;
 
 $('#voiceToggle').addEventListener('change', e => {
   settings.voice = e.target.checked; saveSettings();
-  if (settings.voice) speak('Voice is on!');
+  if (settings.voice) speak(`Voice is on, ${CHILD_NAME}!`);
   else if ('speechSynthesis' in window) window.speechSynthesis.cancel();
+});
+$('#voiceSelect').addEventListener('change', e => {
+  settings.voiceURI = e.target.value;
+  saveSettings();
+  speak(`Hi ${CHILD_NAME}! This is my new stage voice!`);
+});
+$('#testVoice').addEventListener('click', () => {
+  sfx('tap');
+  speak(pick(GREETINGS));
 });
 $('#sfxToggle').addEventListener('change', e => {
   settings.sfx = e.target.checked;
@@ -601,7 +648,7 @@ $('#resetStars').addEventListener('click', () => {
   localStorage.setItem('rumiStars', '0');
   localStorage.setItem('rumiSeen', '[]');
   updateStarCount(); buildAlphabet(); $('#alphaProgress').textContent = '0 / 26';
-  toast('Fresh start! ✨');
+  toast(`Fresh start for ${CHILD_NAME}! ✨`);
 });
 
 document.addEventListener('keydown', e => {
@@ -621,3 +668,7 @@ startWords();
 startSpelling();
 renderWallTabs();
 renderWall();
+$('#homeTip').textContent = pick(HOME_TIPS);
+setInterval(() => {
+  if (currentView === 'home') $('#homeTip').textContent = pick(HOME_TIPS);
+}, 8000);
