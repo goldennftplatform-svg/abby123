@@ -228,9 +228,10 @@ button { font-family: inherit; cursor: pointer; }
 
 .card-grid {
   max-width: 1180px; margin: 0 auto;
-  display: grid; grid-template-columns: repeat(2, minmax(0, 1fr));
+  display: grid; grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: clamp(12px, 2vw, 22px);
 }
+.game-card:last-child { grid-column: 1 / -1; }
 .game-card {
   position: relative; overflow: hidden;
   min-height: clamp(132px, 20vh, 190px);
@@ -253,6 +254,7 @@ button { font-family: inherit; cursor: pointer; }
 .card-color { background: linear-gradient(135deg, #ff5f9e, #f0713f); }
 .card-word  { background: linear-gradient(135deg, #2fb8b0, #2a78c9); }
 .card-spell { background: linear-gradient(135deg, #f4a52a, #e2632b); }
+.card-wall  { background: linear-gradient(135deg, #8b45d8, #2f9fc4); }
 .card-glow {
   position: absolute; width: 220px; height: 220px; right: -60px; top: -110px;
   border-radius: 50%; background: rgba(255, 255, 255, .13);
@@ -366,6 +368,7 @@ button { font-family: inherit; cursor: pointer; }
   color: var(--gold); text-shadow: 0 4px 0 rgba(0,0,0,.35);
   margin: 4px 0 16px;
 }
+.color-example { font-size: .62em; vertical-align: middle; filter: drop-shadow(0 4px 4px rgba(0,0,0,.35)); }
 .row-buttons { display: flex; justify-content: center; gap: 14px; flex-wrap: wrap; }
 .swatch-row { display: flex; justify-content: center; gap: clamp(7px, 1.4vw, 14px); margin-top: 20px; flex-wrap: wrap; }
 .swatch {
@@ -438,6 +441,28 @@ button { font-family: inherit; cursor: pointer; }
 .answer-btn.shake { animation: shake .38s ease; }
 .answer-btn.good { animation: goodPulse .5s ease; border-color: #7bffb0; }
 
+.word-spell, .wall-spell {
+  display: flex; justify-content: center; align-items: center; flex-wrap: wrap;
+  gap: clamp(4px, .8vw, 8px); min-height: 54px;
+  margin: 2px 0 14px;
+}
+.word-spell span, .wall-spell span {
+  display: inline-grid; place-items: center;
+  min-width: clamp(34px, 4.4vw, 50px); height: clamp(42px, 5.2vw, 58px);
+  border-radius: 13px;
+  border: 2px solid rgba(255, 255, 255, .35);
+  background: rgba(255, 255, 255, .12);
+  font-size: clamp(22px, 3vw, 32px); font-weight: 900; color: #fff;
+  transition: transform .12s, background .12s, color .12s;
+}
+.word-spell span.active, .wall-spell span.active {
+  background: var(--gold); color: #6b3a00;
+  transform: scale(1.18) rotate(-4deg);
+  box-shadow: 0 0 20px var(--gold);
+}
+.word-spell span.done, .wall-spell span.done { color: var(--gold); border-color: var(--gold); }
+.word-spell i, .wall-spell i { font-style: normal; font-weight: 900; color: rgba(255,255,255,.45); }
+
 /* ---------------- spelling ---------------- */
 .spell-picture { font-size: clamp(66px, 10vw, 106px); line-height: 1.1; animation: bob 3s ease-in-out infinite; }
 .spell-label { font-size: clamp(16px, 2.1vw, 22px); color: #e6d2ff; margin: 4px 0 12px; font-weight: 800; }
@@ -466,6 +491,28 @@ button { font-family: inherit; cursor: pointer; }
 .tile-letter.used { opacity: .28; pointer-events: none; }
 .tile-letter.shake { animation: shake .38s ease; }
 .spell-card .row-buttons { margin-top: 4px; }
+
+/* ---------------- picture wall ---------------- */
+.wall-grid {
+  max-width: 1180px; margin: 0 auto;
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+  gap: clamp(8px, 1.2vw, 14px);
+}
+.wall-card {
+  min-height: 118px;
+  border-radius: 20px;
+  border: 3px solid rgba(255, 255, 255, .24);
+  background: linear-gradient(180deg, #6a2bb0, #3c116b);
+  box-shadow: var(--shadow-sm);
+  color: #fff;
+  padding: 10px 6px;
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px;
+  transition: transform .1s;
+}
+.wall-card:active { transform: translateY(4px) scale(.95); }
+.wall-card .w-emoji { font-size: clamp(30px, 4vw, 44px); line-height: 1; }
+.wall-card .w-word { font-size: clamp(12px, 1.5vw, 16px); font-weight: 900; text-align: center; line-height: 1.1; }
+.wall-card .w-cat { font-size: 10px; color: #e2cbff; opacity: .85; }
 
 /* ---------------- mascot peek / toast / confetti ---------------- */
 .mascot-peek {
@@ -546,13 +593,15 @@ button { font-family: inherit; cursor: pointer; }
   .star-counter svg { width: 20px; height: 20px; }
   .topbar { gap: 8px; padding-inline: 10px; }
   .card-grid { grid-template-columns: 1fr; }
+  .game-card:last-child { grid-column: span 1; }
   .game-card { min-height: 104px; }
   .mascot-peek { display: none; }
   .home-hero { min-height: 130px; }
 }
 
-@media (orientation: portrait) and (min-width: 761px) {
+@media (min-width: 761px) and (max-width: 1050px) {
   .card-grid { grid-template-columns: 1fr 1fr; }
+  .game-card:last-child { grid-column: span 2; }
   .game-card { min-height: 130px; }
 }
 

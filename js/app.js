@@ -109,12 +109,31 @@ function confetti(count = 24) {
 let roundTimer = null;
 function later(fn, ms) { clearTimeout(roundTimer); roundTimer = setTimeout(fn, ms); }
 
-function celebrate(message, word) {
+function celebrate(message, word, opts = {}) {
   sfx('correct');
   confetti();
   addStar();
   toast(message);
-  speak(word ? `${word}! ${message}` : message);
+  if (!opts.spell) speak(word ? `${word}! ${message}` : message);
+}
+
+function beat(ms) { return new Promise(resolve => later(resolve, ms)); }
+
+/* Show and say each letter of a matched word, one at a time. */
+async function spellLetters(word, el, message) {
+  if (!el) return;
+  const letters = word.split('').filter(c => c !== ' ');
+  el.innerHTML = letters.map(l => `<span>${l.toUpperCase()}</span>`).join('<i>·</i>');
+  const spans = $$('span', el);
+  for (let i = 0; i < spans.length; i++) {
+    spans[i].classList.add('active');
+    sfx('tap');
+    speak(letters[i], { rate: settings.slow ? 0.5 : 0.62, pitch: 1.25 });
+    await beat(settings.slow ? 620 : 470);
+    spans[i].classList.remove('active');
+    spans[i].classList.add('done');
+  }
+  if (message) speak(`${word}! ${message}`);
 }
 
 /* ---------------- navigation ---------------- */
@@ -124,7 +143,8 @@ const TAGLINES = {
   alpha: 'A, B, C - let\'s sing!',
   color: 'Colors everywhere!',
   word: 'Read the little word!',
-  spell: 'Tap the letters!'
+  spell: 'Tap the letters!',
+  wall: '80 pictures to explore!'
 };
 
 function showView(name) {
@@ -179,7 +199,12 @@ $('#themeBtn').addEventListener('click', () => {
 
 /* ---------------- alphabet ---------------- */
 let alphaIndex = 0;
+let alphaWordIndex = 0;
 let overlay = null;
+
+function letterWords(a) {
+  return [{ word: a.word, emoji: a.emoji }].concat(a.more || []);
+}
 
 function buildAlphabet() {
   $('#letterGrid').innerHTML = ALPHABET.map((a, i) => `
@@ -192,8 +217,22 @@ function buildAlphabet() {
     </button>`).join('');
 }
 
+function renderLetterPop(a) {
+  const list = letterWords(a);
+  const current = list[alphaWordIndex % list.length];
+  const pop = $('.letter-pop', overlay);
+  $('.pop-emoji', pop).textContent = current.emoji;
+  $('.pop-word', pop).textContent = current.word;
+  $('.pop-sound', pop).innerHTML = `${a.letter} says <strong>${a.letter.toLowerCase()}</strong> &mdash; ${current.word}!`;
+  const more = $('[data-pop="more"]', pop);
+  more.classList.toggle('hidden', list.length < 2);
+  more.textContent = `🔄 More words (${list.length})`;
+  return current;
+}
+
 function openLetter(i) {
   alphaIndex = i;
+  alphaWordIndex = 0;
   const a = ALPHABET[i];
   closeLetterOverlay();
 
@@ -221,22 +260,33 @@ function openLetter(i) {
       <p class="pop-sound">${a.letter} says <strong>${a.letter.toLowerCase()}</strong> &mdash; ${a.word}!</p>
       <div class="row-buttons">
         <button class="action-btn" data-pop="say" type="button">🔊 Say it</button>
+        <button class="action-btn" data-pop="more" type="button">🔄 More words</button>
         <button class="action-btn action-next" data-pop="next" type="button">Next ➡️</button>
       </div>
     </div>`;
   $('#view-alpha').appendChild(overlay);
 
+  const current = renderLetterPop(a);
+
   $('.pop-close', overlay).addEventListener('click', closeLetterOverlay);
   overlay.addEventListener('click', e => { if (e.target === overlay) closeLetterOverlay(); });
   $('[data-pop="say"]', overlay).addEventListener('click', () => {
-    sfx('tap'); speak(`${a.letter}. ${a.letter} for ${a.word}.`);
+    sfx('tap');
+    const w = letterWords(a)[alphaWordIndex % letterWords(a).length];
+    speak(`${a.letter}. ${a.letter} for ${w.word}.`);
+  });
+  $('[data-pop="more"]', overlay).addEventListener('click', () => {
+    alphaWordIndex++;
+    const w = renderLetterPop(a);
+    sfx('tap');
+    speak(`${a.letter} for ${w.word}.`);
   });
   $('[data-pop="next"]', overlay).addEventListener('click', () => {
     sfx('tap'); openLetter((alphaIndex + 1) % ALPHABET.length);
   });
 
   sfx('mic');
-  speak(`${a.letter}. ${a.letter} for ${a.word}.`);
+  speak(`${a.letter}. ${a.letter} for ${current.word}.`);
 }
 
 function closeLetterOverlay() {
@@ -275,6 +325,7 @@ function renderColorLearn() {
   orb.style.setProperty('--orb-dark', shade(c.hex, -55));
   orb.style.setProperty('--orb-glow', c.hex + 'cc');
   $('#colorName').textContent = c.name;
+  $('#colorExample').textContent = c.emoji;
   $('#colorProgress').textContent = `${colorIndex + 1} / ${COLORS.length}`;
   renderSwatches();
   speak(`This is ${c.name}.`);
@@ -344,7 +395,7 @@ let wordLocked = false;
 let currentWord = null;
 
 function startWords() {
-  wordQueue = shuffle(WORDS).slice(0, 8);
+  wordQueue = shuffle(WORDS).slice(0, 10);
   wordIndex = 0;
   renderWord();
 }
@@ -355,6 +406,7 @@ function renderWord() {
   const reverse = wordIndex % 2 === 1;
   $('#wordProgress').textContent = `${wordIndex + 1} / ${wordQueue.length}`;
 
+  $('#wordSpell').innerHTML = '';
   const target = $('#wordTarget');
   target.classList.toggle('as-word', reverse);
   target.textContent = reverse ? currentWord.word : currentWord.emoji;
@@ -373,14 +425,16 @@ function renderWord() {
     : `Which word is ${currentWord.word}?`);
 }
 
-$('#wordAnswers').addEventListener('click', e => {
+$('#wordAnswers').addEventListener('click', async e => {
   const btn = e.target.closest('.answer-btn');
   if (!btn || wordLocked) return;
   if (btn.dataset.word === currentWord.word) {
     wordLocked = true;
     btn.classList.add('good');
-    celebrate(praise(), currentWord.word);
-    later(() => { wordIndex++; renderWord(); }, 1250);
+    const message = praise();
+    celebrate(message, currentWord.word, { spell: true });
+    await spellLetters(currentWord.word, $('#wordSpell'), message);
+    later(() => { wordIndex++; renderWord(); }, 700);
   } else {
     btn.classList.remove('shake'); void btn.offsetWidth; btn.classList.add('shake');
     sfx('wrong'); speak('Try again!');
@@ -402,7 +456,7 @@ let spellBank = [];
 let spellLocked = false;
 
 function startSpelling() {
-  spellQueue = shuffle(SPELL_WORDS).slice(0, 8);
+  spellQueue = shuffle(SPELL_WORDS).slice(0, 10);
   spellIndex = 0;
   renderSpell();
 }
@@ -465,6 +519,51 @@ $('#spellSay').addEventListener('click', () => {
   speak(`${spellWord}. ${spellWord.split('').join(' ... ')}`);
 });
 
+/* ---------------- picture wall ---------------- */
+let wallCategory = 'All';
+let wallBusy = false;
+
+function renderWallTabs() {
+  const cats = ['All'].concat(Array.from(new Set(WORDS.map(w => w.category))));
+  $('#wallTabs').innerHTML = cats.map(c => `
+    <button class="tab${c === wallCategory ? ' is-active' : ''}" data-cat="${c}"
+            role="tab" aria-selected="${c === wallCategory}" type="button">${c === 'All' ? '✨ All' : c}</button>`).join('');
+}
+
+function renderWall() {
+  const list = wallCategory === 'All' ? WORDS : WORDS.filter(w => w.category === wallCategory);
+  $('#wallProgress').textContent = `${list.length} pictures`;
+  $('#wallGrid').innerHTML = list.map((w, i) => `
+    <button class="wall-card" data-i="${i}" type="button" aria-label="Hear and spell ${w.word}">
+      <span class="w-emoji">${w.emoji}</span>
+      <span class="w-word">${w.word}</span>
+      <span class="w-cat">${w.category}</span>
+    </button>`).join('');
+  $('#wallSpell').innerHTML = '';
+}
+
+$('#wallTabs').addEventListener('click', e => {
+  const b = e.target.closest('[data-cat]');
+  if (!b) return;
+  wallCategory = b.dataset.cat;
+  sfx('tap');
+  renderWallTabs();
+  renderWall();
+});
+
+$('#wallGrid').addEventListener('click', async e => {
+  const b = e.target.closest('.wall-card');
+  if (!b || wallBusy) return;
+  const list = wallCategory === 'All' ? WORDS : WORDS.filter(w => w.category === wallCategory);
+  const w = list[parseInt(b.dataset.i, 10)];
+  wallBusy = true;
+  sfx('tap');
+  speak(w.word);
+  await beat(420);
+  await spellLetters(w.word, $('#wallSpell'), 'Great spelling!');
+  wallBusy = false;
+});
+
 /* ---------------- grown-up settings ---------------- */
 const modal = $('#parentModal');
 function openModal() { modal.classList.add('is-open'); modal.setAttribute('aria-hidden', 'false'); }
@@ -520,3 +619,5 @@ $('#alphaProgress').textContent = `${seenLetters.length} / 26`;
 renderColorLearn();
 startWords();
 startSpelling();
+renderWallTabs();
+renderWall();

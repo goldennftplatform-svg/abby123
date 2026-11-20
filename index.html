@@ -162,6 +162,14 @@
           <span class="card-sub">Build little words</span>
           <span class="card-go">PLAY ▶</span>
         </button>
+
+        <button class="game-card card-wall" data-view="wall" type="button">
+          <span class="card-glow" aria-hidden="true"></span>
+          <span class="card-emoji" aria-hidden="true">🖼️</span>
+          <span class="card-title">Picture Wall</span>
+          <span class="card-sub">80 picture words to hear &amp; spell</span>
+          <span class="card-go">EXPLORE ▶</span>
+        </button>
       </div>
     </section>
 
@@ -194,7 +202,7 @@
           <div class="spotlight-beam" aria-hidden="true"></div>
           <div class="spotlight-orb" id="spotlightOrb"></div>
         </div>
-        <div class="big-word" id="colorName">Purple</div>
+        <div class="big-word"><span class="color-example" id="colorExample" aria-hidden="true">🍇</span> <span id="colorName">Purple</span></div>
         <div class="row-buttons">
           <button class="action-btn" id="colorSay" type="button">🔊 Say it</button>
           <button class="action-btn action-next" id="colorNext" type="button">Next ➡️</button>
@@ -220,6 +228,7 @@
         <div class="word-question" id="wordQuestion">Which one is a <strong>cat</strong>?</div>
         <div class="word-target" id="wordTarget" aria-hidden="true">🐱</div>
         <div class="answer-row" id="wordAnswers"></div>
+        <div class="word-spell" id="wordSpell" aria-live="polite"></div>
         <button class="action-btn listen-btn" id="wordSay" type="button">🔊 Say it again</button>
       </div>
     </section>
@@ -242,6 +251,18 @@
           <button class="action-btn action-next" id="spellNext" type="button">Next ➡️</button>
         </div>
       </div>
+    </section>
+
+    <!-- ============ PICTURE WALL ============ -->
+    <section class="view" id="view-wall">
+      <div class="view-head">
+        <button class="back-btn" data-go-home type="button">◀ Back</button>
+        <h2>Picture Wall</h2>
+        <div class="progress-pill" id="wallProgress">80 pictures</div>
+      </div>
+      <div class="tabs" id="wallTabs" role="tablist" aria-label="Picture categories"></div>
+      <div class="wall-spell" id="wallSpell" aria-live="polite"></div>
+      <div class="wall-grid" id="wallGrid"></div>
     </section>
 
   </main>

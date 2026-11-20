@@ -8,10 +8,11 @@ themed around an original, kid-friendly K-pop stage star inspired by Rumi from
 
 It teaches:
 
-- **A–Z letters** with each letter's sound and a picture word
-- **Colours** — learn them by name, then find the right one
-- **Words** — match pictures to words and words to pictures
-- **Early spelling** — build simple three-letter words by tapping letters
+- **A–Z letters** — 3 picture words for every letter (78 words), with sounds
+- **Colours** — 12 colours with example pictures, then a find-the-colour game
+- **Word Match** — 80 picture words, with letter-by-letter spelling after every correct answer
+- **Picture Wall** — browse all 80 pictures by category (Animals, Food, Nature, Things, Vehicles); tap any card to hear it and see it spelled out
+- **Early spelling** — build 50 words from 3 to 5 letters by tapping letters
 
 Everything runs locally. No internet, no accounts, no downloads, no tracking.
 
