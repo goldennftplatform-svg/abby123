@@ -1,5 +1,7 @@
 # Rumi's Alphabet Stage 🌟
 
+**Live site (GitHub Pages):** https://goldennftplatform-svg.github.io/abby123/
+
 A bright, touch-friendly learning website for little kids (around 3–4 years old),
 themed around an original, kid-friendly K-pop stage star inspired by Rumi from
 *KPop Demon Hunters*.
@@ -107,5 +109,19 @@ or swap in your child's favourite words. Keep the same format and refresh the
 page — no build step needed.
 
 ---
+
+## Easy updates (git style)
+
+The folder is already a git repo connected to
+`https://github.com/goldennftplatform-svg/abby123`. After changing a file:
+
+```bat
+git add -A
+git commit -m "Describe what changed"
+git push
+```
+
+GitHub Pages rebuilds automatically in about 30 seconds. Refresh the live
+site to see the update.
 
 Made with big buttons, gentle feedback, and lots of encouragement. ✨
