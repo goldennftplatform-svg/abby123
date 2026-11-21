@@ -33,7 +33,7 @@ function letterPhrase(ch) {
 /* Speech-only pronunciations for words a basic tablet voice can garble. */
 const WORD_PRONUNCIATIONS = { bread: 'bred' };
 function sayWord(word) { return WORD_PRONUNCIATIONS[String(word).toLowerCase()] || word; }
-function spellAloud(word) { return `${sayWord(word)}. ${word.split('').map(letterPhrase).join(', ')}`; }
+function spellAloud(word) { return `${sayWord(word)}. ${word.split('').map(letterPhrase).join('. ')}`; }
 
 /* ---------------- settings & stars ---------------- */
 const settings = {
@@ -211,21 +211,39 @@ if ('speechSynthesis' in window) {
   window.speechSynthesis.onvoiceschanged = loadVoices;
 }
 
-function speak(text, opts = {}) {
-  if (!settings.voice || !('speechSynthesis' in window)) return;
-  try {
-    const synth = window.speechSynthesis;
-    if (synth.speaking) synth.cancel();
-    const u = new SpeechSynthesisUtterance(text);
-    const voice = chooseVoice();
-    if (voice) { u.voice = voice; u.lang = voice.lang; }
-    else u.lang = 'en-US';
-    u.rate = opts.rate || (settings.slow ? 0.66 : 0.92);
-    u.pitch = opts.pitch || 1.0;
-    u.volume = 1;
-    synth.speak(u);
-  } catch (e) { /* speech is a bonus, never block play */ }
+/* Speak and resolve only when the voice actually finishes. Letter-by-letter
+   games use this so a slow or chatty tablet voice never gets cut off. */
+function speakWait(text, opts = {}) {
+  if (!settings.voice || !('speechSynthesis' in window)) return Promise.resolve();
+  return new Promise(resolve => {
+    let finished = false;
+    const finish = () => {
+      if (finished) return;
+      finished = true;
+      clearTimeout(safety);
+      resolve();
+    };
+    const safety = setTimeout(finish, Math.max(2600, Math.min(12000, String(text).length * 130)));
+    try {
+      const synth = window.speechSynthesis;
+      if (synth.speaking) synth.cancel();
+      const u = new SpeechSynthesisUtterance(text);
+      const voice = chooseVoice();
+      if (voice) { u.voice = voice; u.lang = voice.lang; }
+      else u.lang = 'en-US';
+      u.rate = opts.rate || (settings.slow ? 0.66 : 0.92);
+      u.pitch = opts.pitch || 1.0;
+      u.volume = 1;
+      u.onend = finish;
+      u.onerror = finish;
+      synth.speak(u);
+    } catch (e) {
+      finish();
+    }
+  });
 }
+function speak(text, opts = {}) { speakWait(text, opts); }
+function wait(ms) { return new Promise(resolve => setTimeout(resolve, ms)); }
 
 /* ---------------- shared feedback ---------------- */
 let toastTimer = null;
@@ -275,8 +293,8 @@ async function spellLetters(word, el, message) {
   for (let i = 0; i < spans.length; i++) {
     spans[i].classList.add('active');
     sfx('tap');
-    speak(letterPhrase(letters[i]), { rate: settings.slow ? 0.5 : 0.62, pitch: 1.25 });
-    await beat(settings.slow ? 720 : 560);
+    await speakWait(letterPhrase(letters[i]), { rate: settings.slow ? 0.5 : 0.62, pitch: 1.25 });
+    await wait(settings.slow ? 300 : 200);
     spans[i].classList.remove('active');
     spans[i].classList.add('done');
   }
@@ -638,7 +656,7 @@ function renderSpell() {
   $('#letterBank').innerHTML = spellBank.map((l, i) =>
     `<button class="tile-letter" data-i="${i}" data-letter="${l}" type="button" aria-label="Letter ${l}">${l}</button>`).join('');
   $('#spellNext').disabled = false;
-  speak(`Build the word ${sayWord(spellWord)}. ${spellWord.split('').map(letterPhrase).join(', ')}`);
+  speak(`Build the word ${sayWord(spellWord)}. ${spellWord.split('').map(letterPhrase).join('. ')}`, { rate: settings.slow ? 0.55 : 0.78 });
 }
 
 $('#letterBank').addEventListener('click', e => {
@@ -678,7 +696,7 @@ $('#spellClear').addEventListener('click', () => {
 $('#spellNext').addEventListener('click', () => { sfx('tap'); spellIndex++; renderSpell(); });
 $('#spellSay').addEventListener('click', () => {
   sfx('tap');
-  speak(spellAloud(spellWord));
+  speak(spellAloud(spellWord), { rate: settings.slow ? 0.55 : 0.78 });
 });
 
 /* ---------------- picture wall ---------------- */

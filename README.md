@@ -122,9 +122,11 @@ choose a specific voice from a **Choose voice** list, test it with **Say hi to
 Abby**, or turn voices off completely. The choice is saved in that browser.
 
 Spelling is spoken with a keyword after every letter (“R as in rainbow”), so
-B-R-E-A-D can never blur into “B-E-D”. A few speech-only pronunciations are
-used for words a basic tablet voice can garble — for example, **bread** is
-spoken as “bred” while it is always displayed and spelled as **bread**.
+B-R-E-A-D can never blur into “B-E-D”. During the letter-by-letter reveal,
+Rumi waits for each spoken letter to finish before highlighting the next, with
+a tiny pause in between. A few speech-only pronunciations are used for words a
+basic tablet voice can garble — for example, **bread** is spoken as “bred”
+while it is always displayed and spelled as **bread**.
 
 ---
 
