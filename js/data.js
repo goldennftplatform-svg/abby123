@@ -202,7 +202,8 @@ const HOME_TIPS = [
   `Rumi is waiting for you, ${CHILD_NAME}!`,
   `${CHILD_NAME}, pick a game and let's shine!`,
   `There are 80 pictures on your wall, ${CHILD_NAME}!`,
-  `${CHILD_NAME}, scroll down for a move parade!`
+  `${CHILD_NAME}, your coloring book has 80 pages!`,
+  `${CHILD_NAME}, Rumi's move parade is right at the bottom!`
 ];
 
 /* Body moves for the First -> Next -> Then mini-game. */
@@ -215,7 +216,28 @@ const MOVES = [
   { emoji: '🌀', label: 'Spin around', say: 'Spin around' },
   { emoji: '🪑', label: 'Sit down', say: 'Sit down' },
   { emoji: '🧍', label: 'Stand up', say: 'Stand up' },
-  { emoji: '🙆', label: 'Wave your arms', say: 'Wave your arms' }
+  { emoji: '🙆', label: 'Wave your arms', say: 'Wave your arms' },
+
+  { emoji: '👋', label: 'Wave hello', say: 'Wave hello' },
+  { emoji: '🤗', label: 'Give a big hug', say: 'Give yourself a big hug' },
+  { emoji: '😁', label: 'Smile big', say: 'Smile big' },
+  { emoji: '👀', label: 'Blink your eyes', say: 'Blink your eyes' },
+  { emoji: '🤚', label: 'Wiggle your fingers', say: 'Wiggle your fingers' },
+  { emoji: '🦵', label: 'Tap your knees', say: 'Tap your knees' },
+  { emoji: '💪', label: 'Touch your shoulders', say: 'Touch your shoulders' },
+  { emoji: '👆', label: 'Point up high', say: 'Point up high' },
+  { emoji: '👇', label: 'Point down low', say: 'Point down low' },
+  { emoji: '🦶', label: 'Touch your toes', say: 'Touch your toes' },
+  { emoji: '🚶', label: 'March in place', say: 'March in place' },
+  { emoji: '🕺', label: 'Dance around', say: 'Dance around' },
+  { emoji: '✨', label: 'Make a star shape', say: 'Make a star shape' },
+  { emoji: '🐦', label: 'Flap like a bird', say: 'Flap your wings like a bird' },
+  { emoji: '🦁', label: 'Roar like a lion', say: 'Roar like a lion' },
+  { emoji: '🐱', label: 'Meow like a cat', say: 'Meow like a cat' },
+  { emoji: '🦖', label: 'Stomp like a dinosaur', say: 'Stomp like a dinosaur' },
+  { emoji: '🤫', label: 'Tiptoe quietly', say: 'Tiptoe quietly' },
+  { emoji: '🙅', label: 'Cross your arms', say: 'Cross your arms' },
+  { emoji: '😘', label: 'Blow a kiss', say: 'Blow a kiss' }
 ];
 
 const MOVE_ORDER = ['First', 'Next', 'Then'];
@@ -227,6 +249,7 @@ const QUESTS = [
   { id: 'word', emoji: '🐱', title: 'Word Match', sub: 'Match 20 pictures', view: 'word', goal: 20, badge: '📖', source: 'words' },
   { id: 'spell', emoji: '🧩', title: 'Spell It!', sub: 'Build 10 words', view: 'spell', goal: 10, badge: '🧠', source: 'spells' },
   { id: 'wall', emoji: '🖼️', title: 'Picture Wall', sub: 'Explore 20 cards', view: 'wall', goal: 20, badge: '🖼️', source: 'wall' },
+  { id: 'coloring', emoji: '🖍️', title: 'Coloring Book', sub: 'Save 10 pages', view: 'coloring', goal: 10, badge: '🖍️', source: 'coloring' },
   { id: 'move', emoji: '💃', title: 'Move Parade', sub: 'Do 10 moves', view: 'move', goal: 10, badge: '⭐', source: 'moves' }
 ];
 

@@ -175,6 +175,14 @@
           <span class="card-sub">80 picture words to hear &amp; spell</span>
           <span class="card-go">EXPLORE ▶</span>
         </button>
+
+        <button class="game-card card-coloring" data-view="coloring" type="button">
+          <span class="card-glow" aria-hidden="true"></span>
+          <span class="card-emoji" aria-hidden="true">🖍️</span>
+          <span class="card-title">Coloring Book</span>
+          <span class="card-sub">80 pages to color &amp; learn</span>
+          <span class="card-go">COLOR ▶</span>
+        </button>
       </div>
 
       <!-- ============ ABBY'S QUEST MAP ============ -->
@@ -189,17 +197,6 @@
         <div class="quest-grid" id="questGrid"></div>
       </section>
 
-      <!-- ============ MOVE PARADE MINI-GAME ============ -->
-      <section class="mini-game" id="moveGame" aria-label="Move Parade mini-game">
-        <div class="mini-head">
-          <div>
-            <h2>💃 Rumi's Move Parade</h2>
-            <p>Do the moves, then guess what comes next!</p>
-          </div>
-          <div class="progress-pill" id="moveProgress">Ready</div>
-        </div>
-        <div class="move-panel" id="movePanel"></div>
-      </section>
     </section>
 
     <!-- ============ ALPHABET ============ -->
@@ -282,6 +279,48 @@
       </div>
     </section>
 
+    <!-- ============ COLORING BOOK ============ -->
+    <section class="view" id="view-coloring">
+      <div class="view-head">
+        <button class="back-btn" data-go-home type="button">◀ Back</button>
+        <h2>Coloring Book</h2>
+        <div class="progress-pill" id="coloringProgress">1 / 80</div>
+      </div>
+      <div class="tabs" id="coloringTabs" role="tablist" aria-label="Coloring categories"></div>
+      <div class="coloring-layout">
+        <div class="coloring-stage">
+          <div class="coloring-top">
+            <div class="coloring-title">
+              <span class="coloring-letter" id="coloringLetter">C</span>
+              <span class="coloring-word" id="coloringWord">cat</span>
+            </div>
+            <div class="row-buttons coloring-nav">
+              <button class="action-btn" id="coloringPrev" type="button">◀ Prev</button>
+              <button class="action-btn action-next" id="coloringNext" type="button">Next ➡️</button>
+            </div>
+          </div>
+          <div class="coloring-paper">
+            <svg class="color-art" id="coloringArt" viewBox="0 0 120 150" role="img" aria-label="Coloring page"></svg>
+          </div>
+          <p class="coloring-fact" id="coloringFact"></p>
+          <div class="row-buttons coloring-actions">
+            <button class="action-btn listen-btn" id="coloringSay" type="button">🔊 Say it</button>
+            <button class="action-btn" id="coloringSurprise" type="button">🌈 Surprise me</button>
+            <button class="action-btn" id="coloringReset" type="button">↺ Reset page</button>
+            <button class="action-btn action-next" id="coloringSave" type="button">⭐ Save page</button>
+          </div>
+        </div>
+        <aside class="coloring-side">
+          <h3>Pick a color</h3>
+          <div class="color-palette" id="colorPalette"></div>
+          <div class="book-shelf">
+            <h3>My book <span id="bookCount">0</span></h3>
+            <div class="book-grid" id="bookGrid"></div>
+          </div>
+        </aside>
+      </div>
+    </section>
+
     <!-- ============ PICTURE WALL ============ -->
     <section class="view" id="view-wall">
       <div class="view-head">
@@ -292,6 +331,18 @@
       <div class="tabs" id="wallTabs" role="tablist" aria-label="Picture categories"></div>
       <div class="wall-spell" id="wallSpell" aria-live="polite"></div>
       <div class="wall-grid" id="wallGrid"></div>
+    </section>
+
+    <!-- ============ DOCKED MOVE PARADE ============ -->
+    <section class="mini-game" id="moveGame" aria-label="Move Parade mini-game">
+      <div class="mini-head">
+        <div>
+          <h2>💃 Rumi's Move Parade</h2>
+          <p>Do three moves, then remember the last one!</p>
+        </div>
+        <div class="progress-pill" id="moveProgress">Ready</div>
+      </div>
+      <div class="move-panel" id="movePanel"></div>
     </section>
 
   </main>
@@ -347,6 +398,7 @@
 </div>
 
 <script src="js/data.js"></script>
+<script src="js/coloring.js"></script>
 <script src="js/audio.js"></script>
 <script src="js/app.js"></script>
 <script>

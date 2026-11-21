@@ -15,8 +15,9 @@ It teaches:
 - **Colours** — 12 colours with example pictures, then a find-the-colour game
 - **Word Match** — 80 picture words, with letter-by-letter spelling after every correct answer
 - **Picture Wall** — browse all 80 pictures by category (Animals, Food, Nature, Things, Vehicles); tap any card to hear it and see it spelled out
-- **Early spelling** — build 50 words from 3 to 5 letters by tapping letters
-- **Move Parade** — a mini-game at the bottom of the home screen: do two body moves, then guess what comes next (teaches first/next/then and following directions)
+- **Coloring Book** — 80 original SVG line-art pages (animals, food, nature, things, vehicles); tap a color then tap the picture, save pages to “My book”, and hear a fact about each word
+- **Early spelling** — build 50 words from 3 to 5 letters by tapping letters; Rumi says each letter with a keyword (“R as in rainbow”), so B-R-E-A-D never blurs into “B-E-D”
+- **Move Parade** — a docked mini-game with 29 body moves: do all three moves (First, Next, Then), then remember the last one (teaches sequencing and following directions)
 - **Quest Map** — six badges, progress bars, and a “next up” suggestion that steers Abby to the area needing the most practice
 - **Installable + offline** — Add to Home Screen for a full-screen tablet app; after the first load, the app shell works without internet
 
@@ -109,6 +110,11 @@ device, at a calmer speed and normal pitch. In the grown-up corner you can also
 choose a specific voice from a **Choose voice** list, test it with **Say hi to
 Abby**, or turn voices off completely. The choice is saved in that browser.
 
+Spelling is spoken with a keyword after every letter (“R as in rainbow”), so
+B-R-E-A-D can never blur into “B-E-D”. A few speech-only pronunciations are
+used for words a basic tablet voice can garble — for example, **bread** is
+spoken as “bred” while it is always displayed and spelled as **bread**.
+
 ---
 
 ## What's in the files
@@ -117,9 +123,11 @@ Abby**, or turn voices off completely. The choice is saved in that browser.
 |---|---|
 | `index.html` | Page structure and the built-in SVG mascot |
 | `css/styles.css` | All the styling, animation and tablet-friendly sizing |
-| `js/data.js` | Letters, words, colours and spelling words — easy to edit |
+| `js/data.js` | Letters, words, colours, moves, quests and spelling words — easy to edit |
+| `js/coloring.js` | 80 original SVG line-art coloring pages |
 | `js/audio.js` | Original synthesized stage music and sound effects |
 | `js/app.js` | Game logic, speech and sounds |
+| `manifest.webmanifest`, `sw.js`, `assets/icon.svg` | Installable app icon and offline caching |
 | `server.py` | Python LAN server (used by `START-HERE.bat`) |
 | `server.js` | Node.js fallback server |
 | `assets/` | Optional extra artwork slot |

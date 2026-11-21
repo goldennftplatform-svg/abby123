@@ -17,6 +17,24 @@ function pick(arr) { return arr[Math.floor(Math.random() * arr.length)]; }
 function praise() { return pick(PRAISE); }
 function tryAgainLine() { return pick(TRY_AGAIN); }
 
+/* Letter names alone can blur together in a tablet voice ("B R E A D" -> "BED").
+   Saying a keyword after each letter keeps the spelling unambiguous. */
+const LETTER_KEYWORDS = {
+  a: 'apple', b: 'ball', c: 'cat', d: 'dog', e: 'egg', f: 'fish',
+  g: 'goat', h: 'hat', i: 'ice', j: 'jar', k: 'kite', l: 'lion',
+  m: 'moon', n: 'nose', o: 'orange', p: 'pen', q: 'queen', r: 'rainbow',
+  s: 'sun', t: 'tiger', u: 'umbrella', v: 'van', w: 'water',
+  x: 'x-ray', y: 'yellow', z: 'zebra'
+};
+function letterPhrase(ch) {
+  const c = String(ch).toLowerCase();
+  return `${String(ch).toUpperCase()} as in ${LETTER_KEYWORDS[c] || ch}`;
+}
+/* Speech-only pronunciations for words a basic tablet voice can garble. */
+const WORD_PRONUNCIATIONS = { bread: 'bred' };
+function sayWord(word) { return WORD_PRONUNCIATIONS[String(word).toLowerCase()] || word; }
+function spellAloud(word) { return `${sayWord(word)}. ${word.split('').map(letterPhrase).join(', ')}`; }
+
 /* ---------------- settings & stars ---------------- */
 const settings = {
   voice: localStorage.getItem('rumiVoice') !== 'off',
@@ -61,7 +79,7 @@ function addStar(amount = 1) {
 let seenColors = [];
 try { seenColors = JSON.parse(localStorage.getItem('rumiSeenColors') || '[]') || []; } catch (e) { seenColors = []; }
 
-const DEFAULT_STATS = { words: 0, spells: 0, wall: 0, moves: 0, correct: 0, tries: 0 };
+const DEFAULT_STATS = { words: 0, spells: 0, wall: 0, moves: 0, coloring: 0, correct: 0, tries: 0 };
 let stats = Object.assign({}, DEFAULT_STATS);
 try { stats = Object.assign({}, DEFAULT_STATS, JSON.parse(localStorage.getItem('rumiStats') || '{}') || {}); } catch (e) { stats = Object.assign({}, DEFAULT_STATS); }
 
@@ -128,6 +146,7 @@ function renderParentStats() {
     { label: 'Colors', value: `${seenColors.length}/12` },
     { label: 'Words', value: stats.words || 0 },
     { label: 'Spells', value: stats.spells || 0 },
+    { label: 'Coloring', value: stats.coloring || 0 },
     { label: 'Badges', value: `${earnedBadgeCount()}/${QUESTS.length}` }
   ];
   $('#parentStats').innerHTML = cards.map(c =>
@@ -143,7 +162,7 @@ $('#questGrid').addEventListener('click', e => {
   sfx('tap');
   if (quest.view === 'move') {
     showView('home');
-    later(() => $('#moveGame').scrollIntoView({ behavior: 'smooth', block: 'center' }), 80);
+    startParade();
   } else {
     showView(quest.view);
   }
@@ -242,7 +261,7 @@ function celebrate(message, word, opts = {}) {
   confetti();
   addStar();
   toast(message);
-  if (!opts.spell) speak(word ? `${word}! ${message}` : message);
+  if (!opts.spell) speak(word ? `${sayWord(word)}! ${message}` : message);
 }
 
 function beat(ms) { return new Promise(resolve => later(resolve, ms)); }
@@ -256,12 +275,12 @@ async function spellLetters(word, el, message) {
   for (let i = 0; i < spans.length; i++) {
     spans[i].classList.add('active');
     sfx('tap');
-    speak(letters[i], { rate: settings.slow ? 0.5 : 0.62, pitch: 1.25 });
-    await beat(settings.slow ? 620 : 470);
+    speak(letterPhrase(letters[i]), { rate: settings.slow ? 0.5 : 0.62, pitch: 1.25 });
+    await beat(settings.slow ? 720 : 560);
     spans[i].classList.remove('active');
     spans[i].classList.add('done');
   }
-  if (message) speak(`${word}! ${message}`);
+  if (message) speak(`${sayWord(word)}! ${message}`);
 }
 
 /* ---------------- navigation ---------------- */
@@ -272,7 +291,8 @@ const TAGLINES = {
   color: `${CHILD_NAME}, colors everywhere!`,
   word: `${CHILD_NAME}, read the little word!`,
   spell: `${CHILD_NAME}, tap the letters!`,
-  wall: `80 pictures for ${CHILD_NAME}!`
+  wall: `80 pictures for ${CHILD_NAME}!`,
+  coloring: `${CHILD_NAME}, color the world!`
 };
 
 function showView(name) {
@@ -281,12 +301,16 @@ function showView(name) {
   currentView = name;
   $$('.view').forEach(v => v.classList.toggle('is-active', v.id === 'view-' + name));
   $('#mascotPeek').style.display = name === 'home' ? '' : 'none';
+  $('#moveGame').classList.toggle('hidden', name !== 'home');
   $('#tagline').textContent = TAGLINES[name] || TAGLINES.home;
   if (name === 'home') $('#homeTip').textContent = pick(HOME_TIPS);
   $('.stage').scrollTop = 0;
   const view = $('#view-' + name);
   if (view) view.scrollTop = 0;
   if (name === 'word' && wordQueue.length === 0) startWords();
+  if (name === 'coloring' && coloringPage) {
+    speak(`${coloringPage.letter} is for ${sayWord(coloringPage.word)}. ${coloringPage.fact}`);
+  }
 }
 
 $$('[data-view]').forEach(btn => btn.addEventListener('click', () => { sfx('tap'); showView(btn.dataset.view); }));
@@ -405,20 +429,20 @@ function openLetter(i) {
   $('[data-pop="say"]', overlay).addEventListener('click', () => {
     sfx('tap');
     const w = letterWords(a)[alphaWordIndex % letterWords(a).length];
-    speak(`${a.letter}. ${a.letter} for ${w.word}.`);
+    speak(`${a.letter}. ${a.letter} for ${sayWord(w.word)}.`);
   });
   $('[data-pop="more"]', overlay).addEventListener('click', () => {
     alphaWordIndex++;
     const w = renderLetterPop(a);
     sfx('tap');
-    speak(`${a.letter} for ${w.word}.`);
+    speak(`${a.letter} for ${sayWord(w.word)}.`);
   });
   $('[data-pop="next"]', overlay).addEventListener('click', () => {
     sfx('tap'); openLetter((alphaIndex + 1) % ALPHABET.length);
   });
 
   sfx('mic');
-  speak(`${a.letter}. ${a.letter} for ${current.word}.`);
+  speak(`${a.letter}. ${a.letter} for ${sayWord(current.word)}.`);
 }
 
 function closeLetterOverlay() {
@@ -580,8 +604,8 @@ $('#wordAnswers').addEventListener('click', async e => {
 $('#wordSay').addEventListener('click', () => {
   sfx('tap');
   speak(wordIndex % 2 === 1
-    ? `Which picture is a ${currentWord.word}?`
-    : `Which word is ${currentWord.word}?`);
+    ? `Which picture is a ${sayWord(currentWord.word)}?`
+    : `Which word is ${sayWord(currentWord.word)}?`);
 });
 
 /* ---------------- spelling ---------------- */
@@ -614,7 +638,7 @@ function renderSpell() {
   $('#letterBank').innerHTML = spellBank.map((l, i) =>
     `<button class="tile-letter" data-i="${i}" data-letter="${l}" type="button" aria-label="Letter ${l}">${l}</button>`).join('');
   $('#spellNext').disabled = false;
-  speak(`Build the word ${spellWord}. ${spellWord.split('').join(' ... ')}`);
+  speak(`Build the word ${sayWord(spellWord)}. ${spellWord.split('').map(letterPhrase).join(', ')}`);
 }
 
 $('#letterBank').addEventListener('click', e => {
@@ -630,7 +654,7 @@ $('#letterBank').addEventListener('click', e => {
     slot.textContent = btn.dataset.letter;
     slot.classList.add('filled');
     sfx('tap');
-    speak(btn.dataset.letter, { rate: settings.slow ? 0.55 : 0.7 });
+    speak(letterPhrase(btn.dataset.letter), { rate: settings.slow ? 0.55 : 0.7 });
     if (!spellSlots.includes('')) {
       spellLocked = true;
       sfx('powerup');
@@ -654,7 +678,7 @@ $('#spellClear').addEventListener('click', () => {
 $('#spellNext').addEventListener('click', () => { sfx('tap'); spellIndex++; renderSpell(); });
 $('#spellSay').addEventListener('click', () => {
   sfx('tap');
-  speak(`${spellWord}. ${spellWord.split('').join(' ... ')}`);
+  speak(spellAloud(spellWord));
 });
 
 /* ---------------- picture wall ---------------- */
@@ -702,6 +726,162 @@ $('#wallGrid').addEventListener('click', async e => {
   wallBusy = false;
 });
 
+/* ---------------- coloring book ---------------- */
+const COLOR_PAGES = window.COLORING_PAGES || [];
+const COLOR_ART = window.COLORING_ART || {};
+let coloringSaves = {};
+let coloringDone = [];
+let coloringCategory = 'All';
+let coloringIndex = 0;
+let coloringColor = '#ff5fb8';
+let coloringPage = COLOR_PAGES[0] || null;
+
+try { coloringSaves = JSON.parse(localStorage.getItem('rumiColoring') || '{}') || {}; } catch (e) { coloringSaves = {}; }
+try { coloringDone = JSON.parse(localStorage.getItem('rumiColoringDone') || '[]') || []; } catch (e) { coloringDone = []; }
+
+function coloringList() {
+  return coloringCategory === 'All' ? COLOR_PAGES : COLOR_PAGES.filter(p => p.category === coloringCategory);
+}
+function renderColoringTabs() {
+  if (!COLOR_PAGES.length) return;
+  const cats = ['All'].concat(Array.from(new Set(COLOR_PAGES.map(p => p.category))));
+  $('#coloringTabs').innerHTML = cats.map(c => `
+    <button class="tab${c === coloringCategory ? ' is-active' : ''}" data-color-cat="${c}"
+            role="tab" aria-selected="${c === coloringCategory}" type="button">${c === 'All' ? '✨ All' : c}</button>`).join('');
+}
+function renderColorPalette() {
+  const palette = COLORS.filter(c => c.name !== 'White').map(c => c.hex).concat(['#ffffff']);
+  $('#colorPalette').innerHTML = palette.map((hex, i) => `
+    <button class="color-swatch${hex === coloringColor ? ' is-active' : ''}${i === palette.length - 1 ? ' eraser' : ''}"
+            data-color-hex="${hex}" style="background:${hex}" type="button"
+            aria-label="${i === palette.length - 1 ? 'White eraser' : 'Color ' + (i + 1)}"></button>`).join('');
+}
+function currentColoringFills() { return coloringSaves[coloringPage.art] || {}; }
+function saveColoringFills(fills) {
+  coloringSaves[coloringPage.art] = fills;
+  localStorage.setItem('rumiColoring', JSON.stringify(coloringSaves));
+  renderBookShelf();
+}
+function applyColoringFills() {
+  const fills = currentColoringFills();
+  $$('.paint', $('#coloringArt')).forEach(el => {
+    el.style.fill = fills[el.dataset.part] || '#fff';
+  });
+}
+function renderBookShelf() {
+  const arts = Object.keys(coloringSaves).filter(art => Object.keys(coloringSaves[art] || {}).length);
+  $('#bookCount').textContent = arts.length;
+  $('#bookGrid').innerHTML = arts.length
+    ? arts.map(art => {
+        const page = COLOR_PAGES.find(p => p.art === art);
+        if (!page) return '';
+        return `<button class="book-card" data-art="${art}" type="button" aria-label="Open ${page.word} page">
+          <span class="b-emoji">${page.emoji}</span>
+          <span class="b-word">${page.word}</span>
+        </button>`;
+      }).join('')
+    : '<p class="tiny-hint">Color a page to see it here!</p>';
+}
+function renderColoringPage() {
+  const list = coloringList();
+  if (!list.length || !$('#coloringArt')) return;
+  coloringIndex = Math.max(0, Math.min(coloringIndex, list.length - 1));
+  coloringPage = list[coloringIndex];
+  $('#coloringLetter').textContent = coloringPage.letter;
+  $('#coloringWord').textContent = coloringPage.word;
+  $('#coloringFact').textContent = coloringPage.fact;
+  $('#coloringProgress').textContent = `${coloringIndex + 1} / ${list.length}`;
+  const draw = COLOR_ART[coloringPage.art];
+  $('#coloringArt').innerHTML = draw
+    ? draw()
+    : `<text class="detail" x="60" y="82" text-anchor="middle" font-size="42">${coloringPage.emoji}</text>`;
+  $('#coloringArt').setAttribute('aria-label', `${coloringPage.word} coloring page`);
+  applyColoringFills();
+  renderBookShelf();
+}
+function sayColoringPage() {
+  if (coloringPage) speak(`${coloringPage.letter} is for ${sayWord(coloringPage.word)}. ${coloringPage.fact}`);
+}
+function changeColoringPage(step) {
+  const list = coloringList();
+  if (!list.length) return;
+  coloringIndex = (coloringIndex + step + list.length) % list.length;
+  sfx('tap');
+  renderColoringPage();
+  sayColoringPage();
+}
+
+$('#coloringTabs').addEventListener('click', e => {
+  const b = e.target.closest('[data-color-cat]');
+  if (!b) return;
+  coloringCategory = b.dataset.colorCat;
+  coloringIndex = 0;
+  sfx('tap');
+  renderColoringTabs();
+  renderColoringPage();
+});
+$('#colorPalette').addEventListener('click', e => {
+  const b = e.target.closest('[data-color-hex]');
+  if (!b) return;
+  coloringColor = b.dataset.colorHex;
+  sfx('tap');
+  renderColorPalette();
+});
+$('#coloringArt').addEventListener('click', e => {
+  const shape = e.target.closest('[data-part]');
+  if (!shape || !coloringPage || !shape.dataset.part) return;
+  const fills = Object.assign({}, currentColoringFills(), { [shape.dataset.part]: coloringColor });
+  sfx('tap');
+  saveColoringFills(fills);
+  applyColoringFills();
+});
+$('#coloringPrev').addEventListener('click', () => changeColoringPage(-1));
+$('#coloringNext').addEventListener('click', () => changeColoringPage(1));
+$('#coloringSay').addEventListener('click', () => { sfx('tap'); sayColoringPage(); });
+$('#coloringReset').addEventListener('click', () => {
+  if (!coloringPage) return;
+  delete coloringSaves[coloringPage.art];
+  localStorage.setItem('rumiColoring', JSON.stringify(coloringSaves));
+  sfx('tap');
+  applyColoringFills();
+  renderBookShelf();
+});
+$('#coloringSurprise').addEventListener('click', () => {
+  if (!coloringPage) return;
+  const parts = Array.from(new Set($$('.paint', $('#coloringArt')).map(el => el.dataset.part)));
+  const palette = COLORS.map(c => c.hex);
+  const fills = {};
+  parts.forEach(part => { fills[part] = pick(palette); });
+  sfx('powerup'); confetti(14);
+  saveColoringFills(fills);
+  applyColoringFills();
+  toast(`🌈 Rainbow ${coloringPage.word}!`);
+});
+$('#coloringSave').addEventListener('click', () => {
+  if (!coloringPage) return;
+  const already = coloringDone.includes(coloringPage.art);
+  if (!already) {
+    coloringDone.push(coloringPage.art);
+    localStorage.setItem('rumiColoringDone', JSON.stringify(coloringDone));
+    addStar(); bumpStat('coloring');
+  }
+  const msg = already ? `${coloringPage.word} looks bright!` : praise();
+  sfx('correct'); confetti(18); toast(msg);
+  speak(`${sayWord(coloringPage.word)}! ${msg}`);
+});
+$('#bookGrid').addEventListener('click', e => {
+  const card = e.target.closest('[data-art]');
+  if (!card) return;
+  const page = COLOR_PAGES.find(p => p.art === card.dataset.art);
+  if (!page) return;
+  coloringCategory = page.category;
+  coloringIndex = coloringList().findIndex(p => p.art === page.art);
+  sfx('tap');
+  renderColoringTabs();
+  renderColoringPage();
+  sayColoringPage();
+});
+
 /* ---------------- move parade mini-game ---------------- */
 let paradeMoves = [];
 let paradeStep = 0;
@@ -710,9 +890,10 @@ let paradeLocked = false;
 function renderMoveStart() {
   paradeLocked = false;
   $('#moveProgress').textContent = 'Ready';
+  $('#movePanel').className = 'move-panel is-start';
   $('#movePanel').innerHTML = `
     <div class="move-title">Ready to move, ${CHILD_NAME}?</div>
-    <p class="move-hint">Rumi shows two moves. Then you guess what comes next!</p>
+    <p class="move-hint">Do three moves with Rumi, then remember the last one!</p>
     <button class="say-btn" data-move-action="start" type="button">▶ Start the parade</button>`;
 }
 
@@ -725,10 +906,11 @@ function startParade() {
 
 function renderParadeStep() {
   paradeLocked = false;
-  if (paradeStep >= 2) { renderParadeQuestion(); return; }
+  if (paradeStep >= 3) { renderParadeQuestion(); return; }
   const move = paradeMoves[paradeStep];
   const order = MOVE_ORDER[paradeStep];
-  $('#moveProgress').textContent = `${order} / Then?`;
+  $('#moveProgress').textContent = `${order} / 3`;
+  $('#movePanel').className = 'move-panel is-step';
   $('#movePanel').innerHTML = `
     <div class="move-step-label">${order}</div>
     <div class="move-emoji" aria-hidden="true">${move.emoji}</div>
@@ -744,27 +926,32 @@ function renderParadeQuestion() {
   paradeLocked = false;
   const correct = paradeMoves[2];
   const choices = shuffle([correct, ...shuffle(MOVES.filter(m => m.label !== correct.label)).slice(0, 2)]);
-  $('#moveProgress').textContent = 'What next?';
+  $('#moveProgress').textContent = 'Remember?';
+  $('#movePanel').className = 'move-panel is-quiz';
   $('#movePanel').innerHTML = `
-    <div class="move-step-label">Then what?</div>
-    <div class="move-sequence">
-      <span class="seq-chip">${paradeMoves[0].emoji}</span>
-      <span class="seq-arrow">➜</span>
-      <span class="seq-chip">${paradeMoves[1].emoji}</span>
-      <span class="seq-arrow">➜</span>
-      <span class="seq-question">?</span>
-    </div>
-    <p class="move-hint">${CHILD_NAME}, tap the move that comes next!</p>
-    <div class="move-choices">
-      ${choices.map(m => `
-        <button class="move-choice" data-move-choice="${m.label}" type="button"
-                aria-label="${m.label}">
-          <span class="m-emoji">${m.emoji}</span>
-          <span class="m-label">${m.label}</span>
-        </button>`).join('')}
+    <div class="quiz-wrap">
+      <div class="quiz-left">
+        <div class="move-step-label">Which one was THEN?</div>
+        <div class="move-sequence">
+          <span class="seq-chip">${paradeMoves[0].emoji}</span>
+          <span class="seq-arrow">➜</span>
+          <span class="seq-chip">${paradeMoves[1].emoji}</span>
+          <span class="seq-arrow">➜</span>
+          <span class="seq-question">?</span>
+        </div>
+        <p class="move-hint">${CHILD_NAME}, tap the last move we did!</p>
+      </div>
+      <div class="move-choices">
+        ${choices.map(m => `
+          <button class="move-choice" data-move-choice="${m.label}" type="button"
+                  aria-label="${m.label}">
+            <span class="m-emoji">${m.emoji}</span>
+            <span class="m-label">${m.label}</span>
+          </button>`).join('')}
+      </div>
     </div>`;
   if (currentView === 'home') {
-    speak(`${CHILD_NAME}, we did ${paradeMoves[0].say}, then ${paradeMoves[1].say}. What comes next?`);
+    speak(`${CHILD_NAME}, we did ${paradeMoves[0].say}, then ${paradeMoves[1].say}, then one more move. Which one was it?`);
   }
 }
 
@@ -795,12 +982,14 @@ $('#movePanel').addEventListener('click', e => {
   if (choiceBtn.dataset.moveChoice === correct.label) {
     paradeLocked = true;
     choiceBtn.classList.add('good');
+    $('#moveProgress').textContent = 'Nice!';
     const msg = praise();
     sfx('correct'); confetti(18); addStar(); bumpStat('moves'); bumpStat('correct'); toast(msg);
     speak(`Yes! ${correct.say}! ${msg}`);
     later(startParade, 1900);
   } else {
     choiceBtn.classList.remove('shake'); void choiceBtn.offsetWidth; choiceBtn.classList.add('shake');
+    $('#moveProgress').textContent = 'Try again';
     const line = tryAgainLine();
     sfx('wrong'); bumpStat('tries'); toast(line); speak(line);
   }
@@ -857,9 +1046,12 @@ $('#resetStars').addEventListener('click', () => {
   localStorage.setItem('rumiStars', '0');
   localStorage.setItem('rumiSeen', '[]');
   localStorage.setItem('rumiSeenColors', '[]');
+  coloringSaves = {}; coloringDone = [];
+  localStorage.setItem('rumiColoring', '{}');
+  localStorage.setItem('rumiColoringDone', '[]');
   saveStats();
   updateStarCount(); buildAlphabet(); $('#alphaProgress').textContent = '0 / 26';
-  renderQuestMap(); renderParentStats();
+  renderColoringPage(); renderQuestMap(); renderParentStats();
   toast(`Fresh start for ${CHILD_NAME}! ✨`);
 });
 
@@ -880,6 +1072,9 @@ startWords();
 startSpelling();
 renderWallTabs();
 renderWall();
+renderColoringTabs();
+renderColorPalette();
+renderColoringPage();
 renderMoveStart();
 renderQuestMap();
 renderParentStats();
