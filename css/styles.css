@@ -326,6 +326,30 @@ button { font-family: inherit; cursor: pointer; }
 .color-art circle.detail, .color-art ellipse.detail, .color-art rect.detail, .color-art polygon.detail {
   fill: #2b2b3d; stroke: none;
 }
+.color-tools {
+  display: flex; flex-wrap: wrap; align-items: center; justify-content: center;
+  gap: 8px; margin: 10px 0 2px;
+}
+.tool-btn, .size-btn {
+  min-height: 44px; border-radius: 14px;
+  border: 3px solid rgba(255, 255, 255, .25);
+  background: linear-gradient(180deg, #7b3fd4, #4a1b82);
+  color: #fff; font-weight: 900; font-size: 15px;
+  padding: 8px 14px;
+}
+.tool-btn:active, .size-btn:active { transform: translateY(3px); }
+.tool-btn.is-active, .size-btn.is-active {
+  outline: 4px solid var(--gold); outline-offset: 2px;
+  background: linear-gradient(180deg, #ffd972, #f5a71c);
+  color: #6b3a00;
+}
+.brush-sizes { display: flex; align-items: center; gap: 6px; }
+.size-btn { width: 46px; padding: 0; font-size: 14px; }
+.color-tools .action-btn { font-size: 13px; padding: 8px 12px; }
+.color-art.brush-mode { touch-action: none; cursor: crosshair; }
+.color-art.brush-mode .paint, .color-art.brush-mode .detail { pointer-events: none; }
+.color-art .brush-hit { pointer-events: all; }
+.color-art .brush-stroke { pointer-events: none; }
 .coloring-fact {
   text-align: center; margin: 8px 0 12px;
   font-size: clamp(14px, 1.9vw, 19px); color: #f3e6ff;

@@ -100,7 +100,47 @@ const COLORING_PAGES = [
   { word: 'ambulance', emoji: '🚑', category: 'Vehicles', letter: 'A', fact: 'Ambulances rush to help sick or hurt people.', art: 'ambulance' },
   { word: 'fire truck', emoji: '🚒', category: 'Vehicles', letter: 'F', fact: 'Fire trucks carry hoses and brave firefighters.', art: 'firetruck' },
   { word: 'helicopter', emoji: '🚁', category: 'Vehicles', letter: 'H', fact: 'Helicopters fly with spinning rotor blades.', art: 'helicopter' },
-  { word: 'submarine', emoji: '🛳️', category: 'Vehicles', letter: 'S', fact: 'Submarines travel deep under the sea.', art: 'submarine' }
+  { word: 'submarine', emoji: '🛳️', category: 'Vehicles', letter: 'S', fact: 'Submarines travel deep under the sea.', art: 'submarine' },
+  { word: 'wolf', emoji: '🐺', category: 'Animals', letter: 'W', fact: 'Wolves howl and live in close packs.', art: 'wolf' },
+  { word: 'deer', emoji: '🦌', category: 'Animals', letter: 'D', fact: 'Deer have antlers and nibble leaves.', art: 'deer' },
+  { word: 'fox', emoji: '🦊', category: 'Animals', letter: 'F', fact: 'Foxes have bushy tails and clever tricks.', art: 'fox' },
+  { word: 'owl', emoji: '🦉', category: 'Animals', letter: 'O', fact: 'Owls see well in the dark.', art: 'owl' },
+  { word: 'seal', emoji: '🦭', category: 'Animals', letter: 'S', fact: 'Seals swim and clap with flippers.', art: 'seal' },
+  { word: 'whale', emoji: '🐳', category: 'Animals', letter: 'W', fact: 'Whales sing songs in the ocean.', art: 'whale' },
+  { word: 'crab', emoji: '🦀', category: 'Animals', letter: 'C', fact: 'Crabs walk sideways on the sand.', art: 'crab' },
+  { word: 'turtle', emoji: '🐢', category: 'Animals', letter: 'T', fact: 'Turtles carry shells on their backs.', art: 'turtle' },
+  { word: 'peach', emoji: '🍑', category: 'Food', letter: 'P', fact: 'Peaches are soft and sweet.', art: 'peach' },
+  { word: 'pear', emoji: '🍐', category: 'Food', letter: 'P', fact: 'Pears are juicy and shaped like a bell.', art: 'pear' },
+  { word: 'carrot', emoji: '🥕', category: 'Food', letter: 'C', fact: 'Carrots crunch and help eyes stay healthy.', art: 'carrot' },
+  { word: 'corn', emoji: '🌽', category: 'Food', letter: 'C', fact: 'Corn grows on tall stalks.', art: 'corn' },
+  { word: 'potato', emoji: '🥔', category: 'Food', letter: 'P', fact: 'Potatoes grow underground.', art: 'potato' },
+  { word: 'donut', emoji: '🍩', category: 'Food', letter: 'D', fact: 'Donuts are round treats with a hole.', art: 'donut' },
+  { word: 'popcorn', emoji: '🍿', category: 'Food', letter: 'P', fact: 'Popcorn pops when it gets hot.', art: 'popcorn' },
+  { word: 'candy', emoji: '🍬', category: 'Food', letter: 'C', fact: 'Candy is a sweet little treat.', art: 'candy' },
+  { word: 'planet', emoji: '🪐', category: 'Nature', letter: 'P', fact: 'Planets travel around a star.', art: 'planet' },
+  { word: 'comet', emoji: '☄️', category: 'Nature', letter: 'C', fact: 'Comets have glowing tails in space.', art: 'comet' },
+  { word: 'volcano', emoji: '🌋', category: 'Nature', letter: 'V', fact: 'Volcanoes can puff smoke and lava.', art: 'volcano' },
+  { word: 'island', emoji: '🏝️', category: 'Nature', letter: 'I', fact: 'An island is land surrounded by water.', art: 'island' },
+  { word: 'cactus', emoji: '🌵', category: 'Nature', letter: 'C', fact: 'Cacti store water in their stems.', art: 'cactus' },
+  { word: 'mushroom', emoji: '🍄', category: 'Nature', letter: 'M', fact: 'Mushrooms grow in damp, shady places.', art: 'mushroom' },
+  { word: 'shell', emoji: '🐚', category: 'Nature', letter: 'S', fact: 'Shells are hard homes for sea animals.', art: 'shell' },
+  { word: 'feather', emoji: '🪶', category: 'Nature', letter: 'F', fact: 'Feathers help birds fly and stay warm.', art: 'feather' },
+  { word: 'kite', emoji: '🪁', category: 'Things', letter: 'K', fact: 'Kites dance in the wind.', art: 'kite' },
+  { word: 'drum', emoji: '🥁', category: 'Things', letter: 'D', fact: 'Drums make a loud thump-thump beat.', art: 'drum' },
+  { word: 'guitar', emoji: '🎸', category: 'Things', letter: 'G', fact: 'Guitars sing when you strum strings.', art: 'guitar' },
+  { word: 'crown', emoji: '👑', category: 'Things', letter: 'C', fact: 'A crown sits on a king or queen.', art: 'crown' },
+  { word: 'gift', emoji: '🎁', category: 'Things', letter: 'G', fact: 'Gifts are fun surprises to open.', art: 'gift' },
+  { word: 'candle', emoji: '🕯️', category: 'Things', letter: 'C', fact: 'Candles glow with a warm flame.', art: 'candle' },
+  { word: 'camera', emoji: '📷', category: 'Things', letter: 'C', fact: 'Cameras capture pictures and videos.', art: 'camera' },
+  { word: 'robot', emoji: '🤖', category: 'Things', letter: 'R', fact: 'Robots can follow instructions.', art: 'robot' },
+  { word: 'jeep', emoji: '🚙', category: 'Vehicles', letter: 'J', fact: 'Jeeps drive on rough roads.', art: 'jeep' },
+  { word: 'tram', emoji: '🚊', category: 'Vehicles', letter: 'T', fact: 'Trams roll along city tracks.', art: 'tram' },
+  { word: 'ship', emoji: '🚢', category: 'Vehicles', letter: 'S', fact: 'Ships carry people across the sea.', art: 'ship' },
+  { word: 'balloon', emoji: '🎈', category: 'Vehicles', letter: 'B', fact: 'Balloons float up in the air.', art: 'balloon' },
+  { word: 'sled', emoji: '🛷', category: 'Vehicles', letter: 'S', fact: 'Sleds slide over snow.', art: 'sled' },
+  { word: 'skateboard', emoji: '🛹', category: 'Vehicles', letter: 'S', fact: 'Skateboards roll on little wheels.', art: 'skateboard' },
+  { word: 'canoe', emoji: '🛶', category: 'Vehicles', letter: 'C', fact: 'Canoes glide quietly on water.', art: 'canoe' },
+  { word: 'subway', emoji: '🚇', category: 'Vehicles', letter: 'S', fact: 'Subways carry people underground.', art: 'subway' }
 ];
 
 const COLORING_ART = {
@@ -426,6 +466,166 @@ const COLORING_ART = {
   submarine: () => cpFrame(
     `${cpPoly('fin', '18,84 8,66 26,74')}${cpPoly('propeller', '104,78 116,68 114,100')}${cpEllipse('body', 60, 84, 44, 26)}${cpRect('tower', 48, 50, 24, 20, 6)}${cpRect('periscope', 64, 34, 6, 20, 2)}${cpCircle('window', 42, 82, 8)}${cpCircle('window', 64, 82, 8)}${cpCircle('window', 86, 82, 8)}`,
     `${inkPath('M18 128 Q34 122 50 128 Q66 134 82 128 Q98 122 110 128')}`
+  ),
+  wolf: () => cpFrame(
+    `${cpPoly('ear', '30,58 34,24 54,46')}${cpPoly('ear', '90,58 86,24 66,46')}${cpCircle('head', 60, 66, 33)}${cpEllipse('body', 60, 116, 28, 24)}${cpPath('tail', 'M84 116 Q108 112 102 86 Q99 76 90 82 Z')}`,
+    `${inkCircle(48, 62, 3)}${inkCircle(72, 62, 3)}${inkPath('M54 76 Q60 82 66 76')}`
+  ),
+  deer: () => cpFrame(
+    `${cpPath('antler', 'M44 46 L34 20 M34 20 L26 14 M34 20 L40 12')}${cpPath('antler', 'M76 46 L86 20 M86 20 L94 14 M86 20 L80 12')}${cpEllipse('ear', 32, 56, 12, 6)}${cpEllipse('ear', 88, 56, 12, 6)}${cpEllipse('head', 60, 64, 26, 30)}${cpEllipse('body', 60, 108, 30, 26)}${cpRect('leg', 42, 120, 8, 22, 3)}${cpRect('leg', 70, 120, 8, 22, 3)}`,
+    `${inkCircle(51, 60, 3)}${inkCircle(69, 60, 3)}${inkCircle(60, 78, 4)}`
+  ),
+  fox: () => cpFrame(
+    `${cpPoly('ear', '28,58 32,22 54,46')}${cpPoly('ear', '92,58 88,22 66,46')}${cpCircle('head', 60, 66, 32)}${cpPoly('muzzle', '60,74 38,88 60,96 82,88')}${cpEllipse('body', 60, 116, 26, 22)}${cpPath('tail', 'M82 116 Q116 112 108 78 Q102 66 92 76 Z')}`,
+    `${inkCircle(49, 62, 3)}${inkCircle(71, 62, 3)}${inkCircle(60, 92, 4)}`
+  ),
+  owl: () => cpFrame(
+    `${cpPoly('tuft', '36,48 32,26 50,42')}${cpPoly('tuft', '84,48 88,26 70,42')}${cpEllipse('body', 60, 84, 36, 44)}${cpEllipse('wing', 30, 92, 10, 26)}${cpEllipse('wing', 90, 92, 10, 26)}${cpCircle('eyeDisk', 48, 70, 14)}${cpCircle('eyeDisk', 72, 70, 14)}${cpPoly('beak', '60,78 54,90 66,90')}`,
+    `${inkCircle(48, 70, 4)}${inkCircle(72, 70, 4)}`
+  ),
+  seal: () => cpFrame(
+    `${cpEllipse('body', 58, 86, 36, 42)}${cpCircle('head', 58, 48, 22)}${cpPath('flipper', 'M30 88 Q10 100 24 112 Q34 108 38 96 Z')}${cpPath('flipper', 'M86 88 Q106 100 92 112 Q82 108 78 96 Z')}${cpPoly('tail', '58,124 40,140 58,134 76,140')}`,
+    `${inkCircle(50, 46, 3)}${inkCircle(66, 46, 3)}${inkPath('M54 56 Q58 60 62 56')}`
+  ),
+  whale: () => cpFrame(
+    `${cpPoly('tail', '16,78 4,60 26,68 30,86')}${cpEllipse('body', 62, 84, 46, 30)}${cpPoly('fin', '56,108 40,132 74,112')}${cpPath('spout', 'M60 54 Q52 34 60 24 Q68 34 60 54 Z')}`,
+    `${inkCircle(80, 78, 3)}${inkPath('M84 92 Q92 96 98 90')}`
+  ),
+  crab: () => cpFrame(
+    `${cpEllipse('shell', 60, 86, 38, 26)}${cpCircle('claw', 22, 70, 13)}${cpCircle('claw', 98, 70, 13)}${cpPath('leg', 'M34 100 L18 120 M46 106 L38 132 M74 106 L82 132 M86 100 L102 120')}${cpCircle('eyeStalk', 50, 58, 4)}${cpCircle('eyeStalk', 70, 58, 4)}`,
+    `${inkCircle(50, 54, 3)}${inkCircle(70, 54, 3)}${inkPath('M52 92 Q60 98 68 92')}`
+  ),
+  turtle: () => cpFrame(
+    `${cpEllipse('shell', 60, 86, 38, 30)}${cpCircle('head', 60, 44, 18)}${cpEllipse('flipper', 26, 104, 12, 8)}${cpEllipse('flipper', 94, 104, 12, 8)}${cpEllipse('flipper', 34, 66, 10, 7)}${cpEllipse('flipper', 86, 66, 10, 7)}${cpPoly('tail', '24,86 10,92 24,98')}`,
+    `${inkCircle(53, 42, 3)}${inkCircle(67, 42, 3)}${inkPath('M46 84 L74 84 M52 72 L68 100 M68 72 L52 100')}`
+  ),
+  peach: () => cpFrame(
+    `${cpPath('fruit', 'M60 42 C90 42 100 70 88 102 C78 128 42 128 32 102 C20 70 30 42 60 42 Z')}${cpPath('leaf', 'M62 42 Q82 24 96 36 Q82 50 62 42 Z')}`,
+    `${inkPath('M60 44 L60 30')}`
+  ),
+  pear: () => cpFrame(
+    `${cpPath('fruit', 'M60 38 C74 38 78 56 72 70 C66 84 92 96 84 116 C76 136 44 136 36 116 C28 96 54 84 48 70 C42 56 46 38 60 38 Z')}${cpPath('leaf', 'M62 38 Q78 22 92 34 Q78 46 62 38 Z')}`,
+    `${inkPath('M60 38 L60 26')}`
+  ),
+  carrot: () => cpFrame(
+    `${cpPoly('root', '38,60 82,60 60,138')}${cpPath('leaf', 'M60 60 Q42 44 40 24 Q56 34 60 60')}${cpPath('leaf', 'M60 60 Q60 38 72 20 Q76 42 60 60')}${cpPath('leaf', 'M60 60 Q78 48 92 34 Q84 56 60 60')}`,
+    `${inkPath('M48 78 L54 82 M70 82 L76 78 M52 100 L58 104 M68 104 L74 100')}`
+  ),
+  corn: () => cpFrame(
+    `${cpEllipse('cob', 60, 76, 18, 42)}${cpPath('husk', 'M42 76 Q22 100 30 134 Q46 118 48 90')}${cpPath('husk', 'M78 76 Q98 100 90 134 Q74 118 72 90')}`,
+    `${inkPath('M48 56 L72 56 M46 68 L74 68 M46 80 L74 80 M48 92 L72 92 M52 104 L68 104')}`
+  ),
+  potato: () => cpFrame(
+    `${cpEllipse('potato', 60, 86, 42, 32)}${cpCircle('spot', 42, 76, 4)}${cpCircle('spot', 80, 94, 5)}${cpCircle('spot', 62, 66, 3)}`,
+    `${inkPath('M40 104 Q60 114 82 102')}`
+  ),
+  donut: () => cpFrame(
+    `${cpCircle('icing', 60, 82, 42)}${cpCircle('hole', 60, 82, 15)}${cpCircle('sprinkle', 42, 62, 3)}${cpCircle('sprinkle', 80, 64, 3)}${cpCircle('sprinkle', 44, 100, 3)}${cpCircle('sprinkle', 78, 102, 3)}`,
+    ''
+  ),
+  popcorn: () => cpFrame(
+    `${cpCircle('pop', 40, 56, 12)}${cpCircle('pop', 62, 44, 12)}${cpCircle('pop', 84, 58, 12)}${cpCircle('pop', 52, 70, 12)}${cpCircle('pop', 74, 72, 12)}${cpPoly('bowl', '26,78 94,78 82,132 38,132')}${cpRect('stripe', 34, 96, 52, 8, 4)}`,
+    ''
+  ),
+  candy: () => cpFrame(
+    `${cpPoly('wrapper', '20,68 40,58 40,106 20,96')}${cpPoly('wrapper', '100,68 80,58 80,106 100,96')}${cpEllipse('center', 60, 82, 24, 28)}`,
+    `${inkPath('M50 72 L70 92 M70 72 L50 92')}`
+  ),
+  planet: () => cpFrame(
+    `${cpCircle('world', 60, 76, 34)}${cpEllipse('ring', 60, 76, 52, 14)}${cpCircle('spot', 46, 64, 7)}${cpCircle('spot', 74, 88, 6)}`,
+    `${inkPath('M20 84 Q60 100 100 68')}`
+  ),
+  comet: () => cpFrame(
+    `${cpPoly('tail', '88,46 112,26 104,64 96,58')}${cpPoly('tail', '84,84 116,96 90,104 80,96')}${cpCircle('head', 46, 74, 26)}${cpCircle('glow', 42, 68, 10)}`,
+    ''
+  ),
+  volcano: () => cpFrame(
+    `${cpPoly('mountain', '10,132 48,58 72,58 110,132')}${cpPath('lava', 'M50 62 L58 102 L64 86 L70 62 Z')}${cpCircle('smoke', 52, 40, 12)}${cpCircle('smoke', 70, 30, 14)}${cpCircle('smoke', 86, 42, 10)}`,
+    `${inkPath('M30 132 Q46 118 60 132 Q78 146 96 130')}`
+  ),
+  island: () => cpFrame(
+    `${cpEllipse('water', 60, 122, 56, 18)}${cpEllipse('sand', 60, 106, 42, 14)}${cpRect('trunk', 56, 66, 8, 36, 3)}${cpCircle('leaves', 60, 58, 22)}`,
+    `${inkPath('M20 124 Q34 118 48 124 M72 124 Q86 118 100 124')}`
+  ),
+  cactus: () => cpFrame(
+    `${cpRect('stem', 48, 52, 24, 78, 12)}${cpPath('arm', 'M48 86 Q28 86 30 68 L30 60')}${cpPath('arm', 'M72 76 Q92 76 90 58 L90 50')}${cpRect('pot', 38, 124, 44, 20, 5)}`,
+    `${inkPath('M54 70 L60 66 M66 86 L72 82 M54 102 L60 98 M66 116 L72 112')}`
+  ),
+  mushroom: () => cpFrame(
+    `${cpPath('cap', 'M20 78 Q20 28 60 28 Q100 28 100 78 Z')}${cpRect('stem', 48, 76, 24, 52, 10)}${cpCircle('spot', 40, 54, 8)}${cpCircle('spot', 76, 50, 9)}${cpCircle('spot', 60, 70, 7)}`,
+    ''
+  ),
+  shell: () => cpFrame(
+    `${cpPath('shell', 'M60 128 Q12 96 28 56 Q44 26 60 30 Q76 26 92 56 Q108 96 60 128 Z')}${cpPoly('base', '46,124 74,124 68,138 52,138')}`,
+    `${inkPath('M60 34 L60 126 M44 38 L36 112 M76 38 L84 112 M30 58 L26 92 M90 58 L94 92')}`
+  ),
+  feather: () => cpFrame(
+    `${cpPath('vane', 'M34 126 Q22 66 60 22 Q98 66 86 126 Z')}${cpPath('split', 'M60 22 Q60 80 60 132')}${cpCircle('tip', 60, 22, 6)}`,
+    `${inkPath('M42 54 L60 66 M78 54 L60 66 M40 76 L60 88 M80 76 L60 88 M44 100 L60 110 M76 100 L60 110')}`
+  ),
+  kite: () => cpFrame(
+    `${cpPoly('kite', '60,18 98,66 60,114 22,66')}${cpPoly('patch', '60,18 98,66 60,66')}${cpPoly('patch', '22,66 60,66 60,114')}${cpPath('tail', 'M60 114 Q48 126 60 136 Q72 146 60 150')}${cpPoly('bow', '48,126 36,118 38,134')}${cpPoly('bow', '72,140 84,132 82,148')}`,
+    `${inkPath('M22 66 L98 66 M60 18 L60 114')}`
+  ),
+  drum: () => cpFrame(
+    `${cpEllipse('top', 60, 64, 42, 14)}${cpRect('body', 18, 64, 84, 54, 6)}${cpEllipse('bottom', 60, 118, 42, 12)}${cpRect('band', 18, 78, 84, 8, 3)}${cpRect('band', 18, 100, 84, 8, 3)}`,
+    `${inkPath('M34 40 L48 60 M86 40 L72 60')}`
+  ),
+  guitar: () => cpFrame(
+    `${cpCircle('body', 48, 108, 28)}${cpCircle('body', 76, 92, 24)}${cpRect('neck', 66, 24, 12, 66, 3)}${cpRect('head', 62, 12, 20, 16, 4)}${cpCircle('hole', 62, 98, 9)}`,
+    `${inkPath('M70 24 L70 88 M74 24 L74 88 M68 20 L68 8 M78 20 L78 8')}`
+  ),
+  crown: () => cpFrame(
+    `${cpPoly('crown', '16,108 24,44 46,72 60,28 74,72 96,44 104,108')}${cpRect('band', 16, 104, 88, 20, 6)}${cpCircle('gem', 60, 112, 7)}${cpCircle('gem', 34, 112, 5)}${cpCircle('gem', 86, 112, 5)}`,
+    ''
+  ),
+  gift: () => cpFrame(
+    `${cpRect('box', 20, 68, 80, 62, 6)}${cpRect('ribbonV', 52, 68, 16, 62, 3)}${cpRect('ribbonH', 20, 92, 80, 14, 3)}${cpCircle('bow', 48, 58, 12)}${cpCircle('bow', 72, 58, 12)}`,
+    ''
+  ),
+  candle: () => cpFrame(
+    `${cpRect('wax', 40, 62, 40, 66, 8)}${cpPath('flame', 'M60 20 Q78 42 60 58 Q42 42 60 20 Z')}${cpEllipse('holder', 34, 126, 52, 10)}`,
+    `${inkPath('M60 24 Q66 40 60 52')}`
+  ),
+  camera: () => cpFrame(
+    `${cpRect('body', 16, 54, 88, 66, 10)}${cpRect('top', 38, 40, 32, 16, 5)}${cpCircle('lens', 60, 86, 24)}${cpCircle('lensInner', 60, 86, 13)}${cpCircle('button', 88, 48, 6)}`,
+    ''
+  ),
+  robot: () => cpFrame(
+    `${cpRect('antenna', 58, 18, 4, 18, 2)}${cpCircle('antennaTip', 60, 14, 6)}${cpRect('head', 32, 34, 56, 42, 10)}${cpRect('body', 26, 84, 68, 46, 10)}${cpRect('arm', 10, 88, 12, 36, 5)}${cpRect('arm', 98, 88, 12, 36, 5)}${cpRect('mouth', 44, 62, 32, 8, 3)}`,
+    `${inkCircle(48, 50, 4)}${inkCircle(72, 50, 4)}`
+  ),
+  jeep: () => cpFrame(
+    `${cpRect('body', 12, 70, 96, 44, 8)}${cpRect('hood', 76, 58, 32, 16, 5)}${cpRect('window', 34, 54, 36, 18, 4)}${cpRect('grill', 88, 80, 18, 18, 3)}${cpCircle('wheel', 34, 116, 12)}${cpCircle('wheel', 86, 116, 12)}`,
+    `${inkPath('M34 54 L34 72 M70 54 L70 72')}`
+  ),
+  tram: () => cpFrame(
+    `${cpRect('body', 14, 52, 92, 68, 10)}${cpRect('window', 24, 64, 22, 22, 4)}${cpRect('window', 52, 64, 22, 22, 4)}${cpRect('window', 80, 64, 18, 22, 4)}${cpCircle('wheel', 34, 122, 9)}${cpCircle('wheel', 86, 122, 9)}${cpPath('pole', 'M60 52 L60 14 L86 14')}`,
+    ''
+  ),
+  ship: () => cpFrame(
+    `${cpPoly('hull', '12,96 108,96 92,132 28,132')}${cpRect('cabin', 36, 66, 44, 30, 6)}${cpRect('window', 46, 74, 12, 10, 3)}${cpRect('window', 66, 74, 12, 10, 3)}${cpRect('mast', 58, 16, 5, 50, 2)}${cpPoly('flag', '63,18 88,26 63,34')}`,
+    `${inkPath('M20 108 Q60 118 100 108')}`
+  ),
+  balloon: () => cpFrame(
+    `${cpEllipse('balloon', 60, 64, 38, 46)}${cpPoly('stripe', '60,18 74,24 66,106 54,106 46,24')}${cpRect('basket', 48, 116, 24, 20, 4)}`,
+    `${inkPath('M48 104 L52 116 M72 104 L68 116')}`
+  ),
+  sled: () => cpFrame(
+    `${cpRect('seat', 24, 70, 72, 18, 6)}${cpRect('back', 84, 42, 10, 48, 4)}${cpPath('runner', 'M18 92 Q12 128 36 132 L96 132 Q106 130 102 120')}${cpPath('runner', 'M30 92 Q26 122 46 126 L92 126')}`,
+    ''
+  ),
+  skateboard: () => cpFrame(
+    `${cpPath('deck', 'M14 88 Q14 74 32 74 L88 74 Q106 74 106 88 Q106 102 88 102 L32 102 Q14 102 14 88 Z')}${cpCircle('wheel', 34, 114, 9)}${cpCircle('wheel', 86, 114, 9)}${cpRect('truck', 30, 100, 10, 12, 3)}${cpRect('truck', 80, 100, 10, 12, 3)}`,
+    `${inkPath('M30 88 L90 88')}`
+  ),
+  canoe: () => cpFrame(
+    `${cpPath('hull', 'M12 94 Q60 62 108 94 Q96 130 60 132 Q24 130 12 94 Z')}${cpEllipse('seat', 60, 96, 26, 6)}${cpRect('paddle', 78, 34, 6, 96, 3)}${cpPoly('blade', '74,30 88,30 84,58 78,58')}`,
+    `${inkPath('M22 100 Q60 116 98 100')}`
+  ),
+  subway: () => cpFrame(
+    `${cpRect('body', 10, 54, 100, 66, 14)}${cpRect('window', 22, 68, 22, 20, 4)}${cpRect('window', 50, 68, 22, 20, 4)}${cpRect('window', 78, 68, 20, 20, 4)}${cpRect('stripe', 10, 100, 100, 10, 4)}${cpCircle('wheel', 32, 124, 9)}${cpCircle('wheel', 88, 124, 9)}${cpCircle('light', 20, 112, 5)}${cpCircle('light', 100, 112, 5)}`,
+    ''
   )
 };
 

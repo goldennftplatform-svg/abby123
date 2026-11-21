@@ -202,7 +202,7 @@ const HOME_TIPS = [
   `Rumi is waiting for you, ${CHILD_NAME}!`,
   `${CHILD_NAME}, pick a game and let's shine!`,
   `There are 80 pictures on your wall, ${CHILD_NAME}!`,
-  `${CHILD_NAME}, your coloring book has 80 pages!`,
+  `${CHILD_NAME}, your coloring book has 120 pages!`,
   `${CHILD_NAME}, Rumi's move parade is right at the bottom!`
 ];
 

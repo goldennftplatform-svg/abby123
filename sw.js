@@ -1,5 +1,5 @@
 /* Abby's Alphabet Stage - offline app shell. */
-const CACHE = 'abby123-v7';
+const CACHE = 'abby123-v8';
 const ASSETS = [
   './',
   './index.html',

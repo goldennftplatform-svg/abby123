@@ -180,7 +180,7 @@
           <span class="card-glow" aria-hidden="true"></span>
           <span class="card-emoji" aria-hidden="true">🖍️</span>
           <span class="card-title">Coloring Book</span>
-          <span class="card-sub">80 pages to color &amp; learn</span>
+          <span class="card-sub">120 pages to color &amp; paint</span>
           <span class="card-go">COLOR ▶</span>
         </button>
       </div>
@@ -284,7 +284,7 @@
       <div class="view-head">
         <button class="back-btn" data-go-home type="button">◀ Back</button>
         <h2>Coloring Book</h2>
-        <div class="progress-pill" id="coloringProgress">1 / 80</div>
+        <div class="progress-pill" id="coloringProgress">1 / 120</div>
       </div>
       <div class="tabs" id="coloringTabs" role="tablist" aria-label="Coloring categories"></div>
       <div class="coloring-layout">
@@ -298,6 +298,17 @@
               <button class="action-btn" id="coloringPrev" type="button">◀ Prev</button>
               <button class="action-btn action-next" id="coloringNext" type="button">Next ➡️</button>
             </div>
+          </div>
+          <div class="color-tools" id="colorTools" role="group" aria-label="Painting tools">
+            <button class="tool-btn is-active" data-tool="fill" type="button">🪣 Fill</button>
+            <button class="tool-btn" data-tool="brush" type="button">🖌️ Brush</button>
+            <span class="brush-sizes hidden" id="brushSizes" role="group" aria-label="Brush size">
+              <button class="size-btn" data-size="3" type="button" aria-label="Small brush">•</button>
+              <button class="size-btn is-active" data-size="7" type="button" aria-label="Medium brush">●</button>
+              <button class="size-btn" data-size="12" type="button" aria-label="Big brush">⬤</button>
+            </span>
+            <button class="action-btn" id="brushUndo" type="button">↶ Undo</button>
+            <button class="action-btn" id="brushClear" type="button">🧽 Clear paint</button>
           </div>
           <div class="coloring-paper">
             <svg class="color-art" id="coloringArt" viewBox="0 0 120 150" role="img" aria-label="Coloring page"></svg>

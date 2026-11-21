@@ -734,10 +734,15 @@ let coloringDone = [];
 let coloringCategory = 'All';
 let coloringIndex = 0;
 let coloringColor = '#ff5fb8';
+let coloringTool = 'fill';
+let brushSize = 7;
+let coloringStrokes = {};
+let activeStroke = null;
 let coloringPage = COLOR_PAGES[0] || null;
 
 try { coloringSaves = JSON.parse(localStorage.getItem('rumiColoring') || '{}') || {}; } catch (e) { coloringSaves = {}; }
 try { coloringDone = JSON.parse(localStorage.getItem('rumiColoringDone') || '[]') || []; } catch (e) { coloringDone = []; }
+try { coloringStrokes = JSON.parse(localStorage.getItem('rumiColoringBrush') || '{}') || {}; } catch (e) { coloringStrokes = {}; }
 
 function coloringList() {
   return coloringCategory === 'All' ? COLOR_PAGES : COLOR_PAGES.filter(p => p.category === coloringCategory);
@@ -768,8 +773,57 @@ function applyColoringFills() {
     el.style.fill = fills[el.dataset.part] || '#fff';
   });
 }
+function currentStrokes() { return coloringStrokes[coloringPage.art] || []; }
+function saveColoringStrokes() {
+  localStorage.setItem('rumiColoringBrush', JSON.stringify(coloringStrokes));
+  renderBookShelf();
+}
+function strokePath(points) {
+  return points.map((p, i) => `${i ? 'L' : 'M'}${p.x.toFixed(1)} ${p.y.toFixed(1)}`).join(' ');
+}
+function strokeElement(stroke) {
+  const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+  path.setAttribute('class', 'brush-stroke');
+  path.setAttribute('d', strokePath(stroke.points));
+  path.setAttribute('stroke', stroke.color);
+  path.setAttribute('stroke-width', stroke.size);
+  path.setAttribute('fill', 'none');
+  path.setAttribute('stroke-linecap', 'round');
+  path.setAttribute('stroke-linejoin', 'round');
+  return path;
+}
+function renderBrushStrokes() {
+  const layer = $('#brushLayer');
+  if (!layer) return;
+  layer.innerHTML = '';
+  currentStrokes().forEach(stroke => layer.appendChild(strokeElement(stroke)));
+}
+function svgPoint(e) {
+  const svg = $('#coloringArt');
+  const matrix = svg.getScreenCTM();
+  if (!matrix) return { x: 60, y: 75 };
+  const pt = svg.createSVGPoint ? svg.createSVGPoint() : new DOMPoint();
+  pt.x = e.clientX; pt.y = e.clientY;
+  const local = pt.matrixTransform(matrix.inverse());
+  return {
+    x: Math.max(0, Math.min(120, local.x)),
+    y: Math.max(0, Math.min(150, local.y))
+  };
+}
+function renderBrushUI() {
+  const art = $('#coloringArt');
+  if (art) art.classList.toggle('brush-mode', coloringTool === 'brush');
+  const sizes = $('#brushSizes');
+  if (sizes) sizes.classList.toggle('hidden', coloringTool !== 'brush');
+  $$('[data-tool]').forEach(b => b.classList.toggle('is-active', b.dataset.tool === coloringTool));
+  $$('[data-size]').forEach(b => b.classList.toggle('is-active', Number(b.dataset.size) === brushSize));
+  const undo = $('#brushUndo');
+  if (undo) undo.disabled = currentStrokes().length === 0;
+}
 function renderBookShelf() {
-  const arts = Object.keys(coloringSaves).filter(art => Object.keys(coloringSaves[art] || {}).length);
+  const filled = Object.keys(coloringSaves).filter(art => Object.keys(coloringSaves[art] || {}).length);
+  const painted = Object.keys(coloringStrokes).filter(art => (coloringStrokes[art] || []).length);
+  const arts = Array.from(new Set(filled.concat(painted)));
   $('#bookCount').textContent = arts.length;
   $('#bookGrid').innerHTML = arts.length
     ? arts.map(art => {
@@ -792,11 +846,18 @@ function renderColoringPage() {
   $('#coloringFact').textContent = coloringPage.fact;
   $('#coloringProgress').textContent = `${coloringIndex + 1} / ${list.length}`;
   const draw = COLOR_ART[coloringPage.art];
-  $('#coloringArt').innerHTML = draw
+  const artMarkup = draw
     ? draw()
     : `<text class="detail" x="60" y="82" text-anchor="middle" font-size="42">${coloringPage.emoji}</text>`;
+  $('#coloringArt').innerHTML =
+    `<rect class="brush-hit" x="0" y="0" width="120" height="150" fill="transparent"/>` +
+    artMarkup +
+    `<g id="brushLayer"></g>`;
   $('#coloringArt').setAttribute('aria-label', `${coloringPage.word} coloring page`);
+  activeStroke = null;
   applyColoringFills();
+  renderBrushStrokes();
+  renderBrushUI();
   renderBookShelf();
 }
 function sayColoringPage() {
@@ -828,6 +889,7 @@ $('#colorPalette').addEventListener('click', e => {
   renderColorPalette();
 });
 $('#coloringArt').addEventListener('click', e => {
+  if (coloringTool !== 'fill') return;
   const shape = e.target.closest('[data-part]');
   if (!shape || !coloringPage || !shape.dataset.part) return;
   const fills = Object.assign({}, currentColoringFills(), { [shape.dataset.part]: coloringColor });
@@ -835,15 +897,90 @@ $('#coloringArt').addEventListener('click', e => {
   saveColoringFills(fills);
   applyColoringFills();
 });
+
+$('#coloringArt').addEventListener('pointerdown', e => {
+  if (coloringTool !== 'brush' || !coloringPage) return;
+  e.preventDefault();
+  const art = $('#coloringArt');
+  try { if (art.setPointerCapture) art.setPointerCapture(e.pointerId); } catch (err) { /* synthetic pointers */ }
+  const point = svgPoint(e);
+  const stroke = { color: coloringColor, size: brushSize, points: [point] };
+  activeStroke = Object.assign({}, stroke, { el: strokeElement(stroke) });
+  $('#brushLayer').appendChild(activeStroke.el);
+});
+$('#coloringArt').addEventListener('pointermove', e => {
+  if (!activeStroke) return;
+  e.preventDefault();
+  const p = svgPoint(e);
+  const last = activeStroke.points[activeStroke.points.length - 1];
+  if (Math.hypot(p.x - last.x, p.y - last.y) < 1.5) return;
+  activeStroke.points.push(p);
+  activeStroke.el.setAttribute('d', strokePath(activeStroke.points));
+});
+function finishBrushStroke(e) {
+  if (!activeStroke) return;
+  if (activeStroke.points.length === 1) {
+    const p = activeStroke.points[0];
+    activeStroke.points.push({ x: p.x + 0.1, y: p.y + 0.1 });
+    activeStroke.el.setAttribute('d', strokePath(activeStroke.points));
+  }
+  const { color, size, points } = activeStroke;
+  activeStroke = null;
+  if (!coloringStrokes[coloringPage.art]) coloringStrokes[coloringPage.art] = [];
+  coloringStrokes[coloringPage.art].push({ color, size, points });
+  saveColoringStrokes();
+  renderBrushUI();
+}
+$('#coloringArt').addEventListener('pointerup', finishBrushStroke);
+$('#coloringArt').addEventListener('pointercancel', finishBrushStroke);
+$('#coloringArt').addEventListener('pointerleave', e => {
+  if (activeStroke && e.buttons === 0) finishBrushStroke(e);
+});
+
+$('#colorTools').addEventListener('click', e => {
+  const tool = e.target.closest('[data-tool]');
+  if (tool) {
+    coloringTool = tool.dataset.tool;
+    sfx('tap');
+    renderBrushUI();
+    return;
+  }
+  const size = e.target.closest('[data-size]');
+  if (size) {
+    brushSize = Number(size.dataset.size) || 7;
+    sfx('tap');
+    renderBrushUI();
+  }
+});
+$('#brushUndo').addEventListener('click', () => {
+  if (!coloringPage || !currentStrokes().length) return;
+  coloringStrokes[coloringPage.art].pop();
+  sfx('tap');
+  saveColoringStrokes();
+  renderBrushStrokes();
+  renderBrushUI();
+});
+$('#brushClear').addEventListener('click', () => {
+  if (!coloringPage || !currentStrokes().length) return;
+  delete coloringStrokes[coloringPage.art];
+  sfx('tap');
+  saveColoringStrokes();
+  renderBrushStrokes();
+  renderBrushUI();
+});
 $('#coloringPrev').addEventListener('click', () => changeColoringPage(-1));
 $('#coloringNext').addEventListener('click', () => changeColoringPage(1));
 $('#coloringSay').addEventListener('click', () => { sfx('tap'); sayColoringPage(); });
 $('#coloringReset').addEventListener('click', () => {
   if (!coloringPage) return;
   delete coloringSaves[coloringPage.art];
+  delete coloringStrokes[coloringPage.art];
   localStorage.setItem('rumiColoring', JSON.stringify(coloringSaves));
+  localStorage.setItem('rumiColoringBrush', JSON.stringify(coloringStrokes));
   sfx('tap');
   applyColoringFills();
+  renderBrushStrokes();
+  renderBrushUI();
   renderBookShelf();
 });
 $('#coloringSurprise').addEventListener('click', () => {
@@ -1046,9 +1183,10 @@ $('#resetStars').addEventListener('click', () => {
   localStorage.setItem('rumiStars', '0');
   localStorage.setItem('rumiSeen', '[]');
   localStorage.setItem('rumiSeenColors', '[]');
-  coloringSaves = {}; coloringDone = [];
+  coloringSaves = {}; coloringDone = []; coloringStrokes = {};
   localStorage.setItem('rumiColoring', '{}');
   localStorage.setItem('rumiColoringDone', '[]');
+  localStorage.setItem('rumiColoringBrush', '{}');
   saveStats();
   updateStarCount(); buildAlphabet(); $('#alphaProgress').textContent = '0 / 26';
   renderColoringPage(); renderQuestMap(); renderParentStats();

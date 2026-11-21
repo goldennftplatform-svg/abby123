@@ -15,7 +15,7 @@ It teaches:
 - **Colours** — 12 colours with example pictures, then a find-the-colour game
 - **Word Match** — 80 picture words, with letter-by-letter spelling after every correct answer
 - **Picture Wall** — browse all 80 pictures by category (Animals, Food, Nature, Things, Vehicles); tap any card to hear it and see it spelled out
-- **Coloring Book** — 80 original SVG line-art pages (animals, food, nature, things, vehicles); tap a color then tap the picture, save pages to “My book”, and hear a fact about each word
+- **Coloring Book** — 120 original SVG line-art pages (animals, food, nature, things, vehicles) with **Fill** and **Brush** tools, three brush sizes, undo/clear, a gray swatch and white eraser, saved pages in “My book”, and a spoken fact for every word
 - **Early spelling** — build 50 words from 3 to 5 letters by tapping letters; Rumi says each letter with a keyword (“R as in rainbow”), so B-R-E-A-D never blurs into “B-E-D”
 - **Move Parade** — a docked mini-game with 29 body moves: do all three moves (First, Next, Then), then remember the last one (teaches sequencing and following directions)
 - **Quest Map** — six badges, progress bars, and a “next up” suggestion that steers Abby to the area needing the most practice
@@ -102,6 +102,17 @@ artist are used or included.
 
 You can turn the stage music off in the grown-up corner if you'd prefer a
 quieter game.
+
+### Painting tools 🖌️
+
+The Coloring Book has two ways to paint:
+
+- **Fill** — tap a color, then tap a picture part to fill it
+- **Brush** — drag a finger or stylus to paint freehand; choose small, medium,
+  or big, undo the last stroke, or clear all brush strokes
+
+Gray is in the palette, and the striped white swatch is an eraser. Fill colors,
+brush strokes, and saved pages all stay in that browser.
 
 ### Voice quality 🗣️
 
